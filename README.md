@@ -1,6 +1,6 @@
 # SandboxLife Beta
 
-SandboxLife is a D&D-themed reflective journaling application that gamifies self-reflection through an icon unlock progression system and social features integrated into a fantasy adventure narrative.
+SandboxLife is a reflective journaling application that gamifies self-reflection through an icon unlock progression system and social features. It offers a unique "Adventure Mode" extension that transforms your journey into an immersive fantasy narrative.
 
 ## Features
 
@@ -10,19 +10,20 @@ SandboxLife is a D&D-themed reflective journaling application that gamifies self
 - **Thought of the Day**: Brief status updates and reflections
 - **Back-dated Entries**: Entry date picker for calendar views
 
-### D&D Progression System (v2.0)
+### Gamification & Progression
 - **XP & Leveling**: Earn 20 XP per entry + streak bonuses. Levels 1-100 with exponential scaling
-- **16 D&D Titles**: From "Wanderer" (Lv1) to "Ascended Author" (Lv100)
+- **Level Titles**: From "Wanderer" (Lv1) to "Ascended Author" (Lv100)
 - **34 Unlockable Icons**: Common → Legendary rarity across 5 tiers
 - **19 Achievements**: Journal, Streak, Social, and Milestone categories (50-5000 XP rewards)
 - **Streak System**: 3-day (+5 XP) and 7-day (+15 XP) streak bonuses
 
-### Social Features ("Party System")
-- **Friends**: Add party members, see their level & D&D title
-- **Messaging**: Direct messages, group chats, and "The Tavern" global chat
+### Social Features
+- **Friends**: Connect with other users
+- **Messaging**: Direct messages, group chats, and global chat
 - **Leaderboard**: Compete by level, XP, entries, or streak
 
-### Game Mode & Dashboard V2 ⚔️
+### Adventure Mode Extension (Dashboard V2) ⚔️
+*An immersive fantasy skin for your journaling experience.*
 - **Immersive Hub**: 3D quadrant-based dashboard organizing entries by Mind, Body, Spirit, and Heart
 - **Timeline Map**: Visual journey of your entries as a winding path
 - **The Scribe's Desk**: Themed journaling interface with wax seal animations
@@ -75,7 +76,7 @@ src/
 ├── pages/               # 20 route pages
 ├── components/          # 60+ components organized by feature
 │   ├── dashboard/       # Classic dashboard cards
-│   ├── game/            # D&D game mode components
+│   ├── game/            # Adventure mode components
 │   ├── progression/     # ProgressionCard, LevelUpModal
 │   ├── friends/         # FriendCard, AddFriend, FriendRequests
 │   ├── chat/            # MessageBubble, MessageInput
@@ -105,7 +106,7 @@ src/
 - **Icon Resolver**: A centralized utility (`src/utils/iconResolver.js`) guarantees correct icon display across the app by mapping entry meanings to local assets, fixing broken legacy URLs automatically.
 - **Set B preview**: `SetBCollection` uses `iconsv2_questions` for a preview-only gallery.
 
-## D&D Progression System
+## Progression System Details
 
 ### Icon Distribution
 | Journal Type | Total Icons | Default | Unlockable |
@@ -136,7 +137,7 @@ getIconsForJournal(userId, type) // Icons with unlock status
 getUserAchievements(userId)    // Earned achievements
 getLeaderboard(limit, orderBy) // Top users
 
-// social.js (enhanced with D&D)
+// social.js
 getFriends(userId)   // Returns friends with level & title
 searchUsers(query)   // Returns users with level & title
 ```
