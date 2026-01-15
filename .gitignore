@@ -116,10 +116,9 @@ local-config.js
 # Generated files
 *.generated.*
 
-# Package lock files (choose one - keep the one you use)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+# Package lock files (using npm, ignore others)
+yarn.lock
+pnpm-lock.yaml
 
 # Secrets and credentials
 *.pem

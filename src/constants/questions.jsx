@@ -1,30 +1,29 @@
-// import Anchor from "../assets/icons/anchor.svg";
-// import BirdMaccaw from "../assets/icons/BirdMaccaw.svg";
-// import Butterfly from "../assets/icons/Butterfly.svg";
-// import Column from "../assets/icons/column.svg";
-// import Egg from "../assets/icons/Egg.svg";
-// import Frog from "../assets/icons/frog.png";
-// import Globe from "../assets/icons/Globe.svg";
-// import HorseShoe from "../assets/icons/HorseShoe.svg";
-// import Key from "../assets/icons/Key.svg";
-// import Leaf from "../assets/icons/Leaf.svg";
-// import Lighthouse from "../assets/icons/Lighthouse.svg";
-// import Lizard from "../assets/icons/Lizard.svg";
-// import Lock from "../assets/icons/Lock.svg";
-// import WaterLily from "../assets/icons/Lotus.svg";
-// import NauticalWheel from "../assets/icons/NauticalWheel.svg";
-// import Octopus from "../assets/icons/Octopus.svg";
-// import PalmTree from "../assets/icons/PalmTree.svg";
-// import Rose from "../assets/icons/Rose.svg";
-// import Shark from "../assets/icons/Shark.svg";
-// import Shell from "../assets/icons/shell.svg";
-// import Shield from "../assets/icons/shield.svg";
-// import SkullCrossBones from "../assets/icons/SkullCrossBones.svg";
-// import Snake from "../assets/icons/Snake.svg";
-// import Star from "../assets/icons/Star.svg";
-// import Sword from "../assets/icons/Sword.svg";
-// import TreasureChest from "../assets/icons/TreasureChest.svg";
-// import Trophy from "../assets/icons/Trophy.svg";
+import Anchor from "../assets/icons/anchor.png";
+import BirdMaccaw from "../assets/icons/BirdMaccaw.png";
+import Butterfly from "../assets/icons/Butterfly.png";
+import Column from "../assets/icons/column.png";
+import Egg from "../assets/icons/Egg.png";
+import Globe from "../assets/icons/Globe.png";
+import HorseShoe from "../assets/icons/HorseShoe.png";
+import Key from "../assets/icons/Key.png";
+import Leaf from "../assets/icons/Leaf.png";
+import Lighthouse from "../assets/icons/Lighthouse.png";
+import Lizard from "../assets/icons/Lizard.png";
+import Lock from "../assets/icons/Lock.png";
+import Lotus from "../assets/icons/Lotus.png";
+import NauticalWheel from "../assets/icons/NauticalWheel.png";
+import Octopus from "../assets/icons/Octopus.png";
+import PalmTree from "../assets/icons/PalmTree.png";
+import Rose from "../assets/icons/Rose.png";
+import Shark from "../assets/icons/Shark.png";
+import Shell from "../assets/icons/shell.png";
+import Shield from "../assets/icons/shield.png";
+import SkullCrossBones from "../assets/icons/SkullCrossBones.png";
+import Snake from "../assets/icons/Snake.png";
+import Star from "../assets/icons/Star.png";
+import Sword from "../assets/icons/Sword.png";
+import TreasureChest from "../assets/icons/TreasureChest.png";
+import Trophy from "../assets/icons/Trophy.png";
 
 // Icons v2 imports
 import AppleIcon from "../assets/iconsv2/Apple.jpg";
@@ -67,7 +66,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Shield",
     meaning: "Protection",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/shield%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvc2hpZWxkIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NjU5LCJleHAiOjE4MDk2NzAyNTl9.HWZyumyugVrqu52Wt4zUmWLjmg7cgQUJrxIsGroKz3M&t=2024-08-11T06%3A10%3A53.928Z",
+    icon: Shield,
     trigger_question: [
       "What ways do you need protection?",
       "What forces or threats required you to be on guard?",
@@ -80,7 +79,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Snake",
     meaning: "Growth",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Snake%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU25ha2UgY29weS5zdmciLCJpYXQiOjE3MjMzNTYyNDksImV4cCI6MTgwOTY2OTg0OX0.Rt9TXieSgreOi_IWPqQuKh05tTcGeUfhPJEoDYsl7ww&t=2024-08-11T06%3A04%3A04.471Z",
+    icon: Snake,
     trigger_question: [
       "What have you outgrown in your life, that you could shed iand make room for new beginnings? ",
       "How did you outgrow past situations and reinvent yourself?",
@@ -93,7 +92,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Treasure",
     meaning: "Discovery & Prosperity",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/TreasureChest%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvVHJlYXN1cmVDaGVzdCBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjQwNiwiZXhwIjoxODA5NjcwMDA2fQ.ko_JHtZ01xs99g3j-we_has8u1v4eGyR-QuELigeb4Q&t=2024-08-11T06%3A06%3A41.144Z",
+    icon: TreasureChest,
     trigger_question: [
       "What do you consider to be your strongest natural talents, skills and gifts?",
       "What non-material treasures have you recognized as truly valuable?",
@@ -106,7 +105,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Water Lily",
     meaning: "Enlightenment",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Lotus%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTG90dXMgY29weS5zdmciLCJpYXQiOjE3MjMzNTU4NzMsImV4cCI6MTgwOTY2OTQ3M30.NaKzWCnFyHCs-DjarNkY8Mp-yVxU780Z4kOIOcF6EUg&t=2024-08-11T05%3A57%3A48.851Z",
+    icon: Lotus,
     trigger_question: [
       "How do you view enlightenment?",
       "What self-care practices contribute to your wellbeing?",
@@ -119,7 +118,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Rose",
     meaning: "Love & Friendship",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Rose%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvUm9zZSBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjExMiwiZXhwIjoxODA5NjY5NzEyfQ.aG8LELAn-AvB3U5TkiiWtfhv6vB4IAJhPrgTgcucYU0&t=2024-08-11T06%3A01%3A46.977Z",
+    icon: Rose,
     trigger_question: [
       "What importance do loved ones, friends and relationships have and how do you see it evolving?",
       "What deep kinships or romances blossomed in your past?  ",
@@ -132,7 +131,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Key",
     meaning: "Access",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Key%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvS2V5IGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU1NDY5LCJleHAiOjE4MDk2NjkwNjl9.bujtNKCAhPq9qAwBLSISZdxsvK3V9RZ6WOSbbzayiVs&t=2024-08-11T05%3A51%3A04.427Z",
+    icon: Key,
     trigger_question: [
       "How can you allow doors to open, and accept or provide assistance ?",
       "What has recently unlocked important gateways or achievements?",
@@ -145,7 +144,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Trophy",
     meaning: "Recognition",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Trophy%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvVHJvcGh5IGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NDg5LCJleHAiOjE4MDk2NzAwODl9.9rgwuCzP7XbqqxBWyZPgtgGUAXEOmKMF7wetPxBwzAA&t=2024-08-11T06%3A08%3A04.806Z",
+    icon: Trophy,
     trigger_question: [
       "What is something generally and currently happening that you would like recognition for? ",
       "What recent victories or hard-won accolades inspire you now?  ",
@@ -158,7 +157,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Skull & bones",
     meaning: "Endings",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/SkullCrossBones%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU2t1bGxDcm9zc0JvbmVzIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2MTk4LCJleHAiOjE4MDk2Njk3OTh9.egbWXxXTqxzMjA8UGc1pQBbrJi7pqwfpuCjhWpLMcC4&t=2024-08-11T06%3A03%3A13.063Z",
+    icon: SkullCrossBones,
     trigger_question: [
       "What chapters in your life are closing, and are you creating a conscious ending?",
       "What recent partings or eras ending have you had to process?",
@@ -171,7 +170,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Shark",
     meaning: "Boundaries",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Shark%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU2hhcmsgY29weS5zdmciLCJpYXQiOjE3MjMzNTYxNTAsImV4cCI6MTgwOTY2OTc1MH0.FqZQnlpLRDDJgxdQz45Zy0xhaWVNZbHcIKbfGAk79Pk&t=2024-08-11T06%3A02%3A25.503Z",
+    icon: Shark,
     trigger_question: [
       "What are your thoughts about boundaries?",
       "What currently lurks as a source of fear or agitation?  ",
@@ -184,7 +183,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Leaf",
     meaning: "Vitality",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Leaf%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTGVhZiBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTUxOSwiZXhwIjoxODA5NjY5MTE5fQ.LwIfiKv6lusnfHUpGtksDGlw1XBcDXfLDHMbrPSrkz0&t=2024-08-11T05%3A51%3A54.411Z",
+    icon: Leaf,
     trigger_question: [
       "What are your notions about health and fitness? ",
       "What self-care practices contribute to your wellbeing?",
@@ -197,7 +196,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Palm tree",
     meaning: "Travel & Leisure",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/PalmTree%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvUGFsbVRyZWUgY29weS5zdmciLCJpYXQiOjE3MjMzNTYwNTUsImV4cCI6MTgwOTY2OTY1NX0.ZdOcwK5tGCh8--yme4K-lbobTgspKOjkXA_CHb52wU0&t=2024-08-11T06%3A00%3A49.880Z",
+    icon: PalmTree,
     trigger_question: [
       "What are your favorite ways to spend your leisure time, previous travel, or upcoming travel?",
       "What leisure pursuits relax and restore you these days?",
@@ -210,7 +209,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Anchor",
     meaning: "Security",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/anchor%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvYW5jaG9yIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NTI5LCJleHAiOjE4MDk2NzAxMjl9.cqsZxmbf6M3lKOaalhGm0NZjH2IZlypz1lPM7yez3g8&t=2024-08-11T06%3A08%3A44.481Z",
+    icon: Anchor,
     trigger_question: [
       "What role and priority does security play in your life right now and do you seek it?",
       "What sources of constancy and groundedness support you now?  ",
@@ -223,7 +222,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Octopus",
     meaning: "Multi-tasking",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Octopus%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvT2N0b3B1cyBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjAwOSwiZXhwIjoxODA5NjY5NjA5fQ.N_rb1dDneslC2Z5qZLeZ1mF3DiNRH0A9AAg20qfwBg8&t=2024-08-11T06%3A00%3A04.262Z",
+    icon: Octopus,
     trigger_question: [
       "Do you handle many different activities at the same time?",
       "How have you prioritized and handled overload in the past?",
@@ -236,7 +235,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Globe",
     meaning: "International issues",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Globe%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvR2xvYmUgY29weS5zdmciLCJpYXQiOjE3MjMzNTUzMDksImV4cCI6MTgwOTY2ODkwOX0.IdNzbnI0ugWP327zUW4rmXMLh9mwibnhbk_Suv1cwDU&t=2024-08-11T05%3A48%3A24.630Z",
+    icon: Globe,
     trigger_question: [
       "Do you seek international travel and do you keep on top of world issue?",
       "Where have your mental or physical journeys taken you lately?",
@@ -249,7 +248,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Sword",
     meaning: "Decisive",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Sword%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU3dvcmQgY29weS5zdmciLCJpYXQiOjE3MjMzNTYzNjMsImV4cCI6MTgwOTY2OTk2M30.CwWbMVAsikzoyBDeAinDdY2UXhqEWo4Cxo85gH2v4hg&t=2024-08-11T06%3A05%3A58.053Z",
+    icon: Sword,
     trigger_question: [
       "Are you a quick decision maker?",
       "What tough choices demanded you sever circumstances forever? ",
@@ -262,7 +261,7 @@ export const book_journal_questions = [
     journal_type: "book_journal",
     name: "Nautical wheel",
     meaning: "Direction",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/NauticalWheel%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTmF1dGljYWxXaGVlbCBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTk0OSwiZXhwIjoxODA5NjY5NTQ5fQ.am5G7jd0Be6IJKklilzVHn-q8FE47Yk-s2WpIejRPZQ&t=2024-08-11T05%3A59%3A04.052Z",
+    icon: NauticalWheel,
     trigger_question: [
       "Do you feel in control of your own destiny, or do you feel like other influences are directing you?",
       "Who helped steer you in a better direction during unstable waters?",
@@ -278,7 +277,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Butterfly",
     meaning: "Transformation",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Butterfly%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvQnV0dGVyZmx5IGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU1MTk2LCJleHAiOjE4MDk2Njg3OTZ9.VTIAWFbX_3X1F_EBceHjkioQx2N1Md7_mF1pqcOr-kU&t=2024-08-11T05%3A46%3A30.940Z",
+    icon: Butterfly,
     trigger_question: [
       "What changes are going on in your life right now?",
       "What was a pivotal moment that changed your perspective?",
@@ -291,7 +290,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Star",
     meaning: "Immortality & Fame",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Star%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU3RhciBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjMxNSwiZXhwIjoxODA5NjY5OTE1fQ.sscz4aQocbhBCpcGaWbh5pvmGTT6vFklA81ddl6evx4&t=2024-08-11T06%3A05%3A09.959Z",
+    icon: Star,
     trigger_question: [
       "What are your notions of immortality, fame and ancestors?",
       "Whose shining example still motivates you today? ",
@@ -304,7 +303,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Lizard",
     meaning: "Regeneration",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Lizard%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTGl6YXJkIGNvcHkuc3ZnIiwiaWF0IjoxNzMxMTczMTIyLCJleHAiOjE3NjI3MDkxMjJ9.58Cc-qDjiOZny_ofiyVlGQz0WUac6XQRcCm8sFVDPLw&t=2024-11-09T17%3A25%3A22.409Z",
+    icon: Lizard,
     trigger_question: [
       "How can you reinvent and regenerate yourself?",
       "Tell a story of overcoming an injury, threat or setback.  ",
@@ -317,7 +316,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Lighthouse",
     meaning: "Guidance",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Lighthouse%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTGlnaHRob3VzZSBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTYxMywiZXhwIjoxODA5NjY5MjEzfQ.Pm0oyNYP-JKU-_52u0_FC1-uMWRqc7H1w7ewJrvJBzo&t=2024-08-11T05%3A53%3A28.523Z",
+    icon: Lighthouse,
     trigger_question: [
       "Where do you look for guidance and what makes you feel safe, secure, and strong?",
       "What currently acts as a guiding light for you?",
@@ -330,7 +329,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Bird",
     meaning: "Overview",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/BirdMaccaw%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvQmlyZE1hY2NhdyBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTA3OCwiZXhwIjoxODA5NjY4Njc4fQ.vyTJq4SmvSRwbTGeggcUs-lSgO77MRrZWM9nRvXvLw8&t=2024-08-11T05%3A44%3A33.184Z",
+    icon: BirdMaccaw,
     trigger_question: [
       "How can you gain a new perspective on a situation?",
       "What techniques helped you gain a bird's eye view of a situation?",
@@ -343,7 +342,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Lock",
     meaning: "Obstacle",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Lock%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTG9jayBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTgwNywiZXhwIjoxODA5NjY5NDA3fQ.DFG70l4RgmBbclYtVtZyz8DeNEtVnzQdjteuXChHAqk&t=2024-08-11T05%3A56%3A42.437Z",
+    icon: Lock,
     trigger_question: [
       "What circumstances are presenting themselves as obstacles?",
       "How did you break through or overcome those constraints?  ",
@@ -356,7 +355,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Egg",
     meaning: "Rebirth",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Egg.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvRWdnLnN2ZyIsImlhdCI6MTcyMzM1NTI0OCwiZXhwIjoxODA5NjY4ODQ4fQ.88qp3zrvlK5x7jA2CN0BNckpKk4ZOtbtLucuOc-ZsJ4&t=2024-08-11T05%3A47%3A23.102Z",
+    icon: Egg,
     trigger_question: [
       "What does rebirth mean to you, and what new beginnings are taking place?",
       "When did your life take an entirely new direction or form?",
@@ -369,7 +368,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Shield",
     meaning: "Protection",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/shield%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvc2hpZWxkIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NjU5LCJleHAiOjE4MDk2NzAyNTl9.HWZyumyugVrqu52Wt4zUmWLjmg7cgQUJrxIsGroKz3M&t=2024-08-11T06%3A10%3A53.928Z",
+    icon: Shield,
     trigger_question: "What ways do you need protection?",
     uuid: "d_shield",
   },
@@ -377,7 +376,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Snake",
     meaning: "Growth",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Snake%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU25ha2UgY29weS5zdmciLCJpYXQiOjE3MjMzNTYyNDksImV4cCI6MTgwOTY2OTg0OX0.Rt9TXieSgreOi_IWPqQuKh05tTcGeUfhPJEoDYsl7ww&t=2024-08-11T06%3A04%3A04.471Z",
+    icon: Snake,
     trigger_question:
       "What have you outgrown in your life, that you could shed iand make room for new beginnings?",
     uuid: "d_snake",
@@ -386,7 +385,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Horse shoe",
     meaning: "Luck",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/HorseShoe%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvSG9yc2VTaG9lIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU1NDAyLCJleHAiOjE4MDk2NjkwMDJ9.LqxZGZ2Hzh_PeOIIYk8nW-fh9A1GsRHpdRoTG7iQsc4&t=2024-08-11T05%3A49%3A57.520Z",
+    icon: HorseShoe,
     trigger_question:
       "What are your notions about being lucky verses being persistent?",
     uuid: "d_horse_shoe",
@@ -395,7 +394,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Column",
     meaning: "Self-reliance",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/column%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvY29sdW1uIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NTY1LCJleHAiOjE4MDk2NzAxNjV9.X4G5B4MZvCk4SCYN6h9mfqE4SK4socL5VKOOGfcBe7s&t=2024-08-11T06%3A09%3A20.115Z",
+    icon: Column,
     trigger_question:
       "What are your thoughts about self-reliance, where do you turn to find inner strength?",
     uuid: "d_column",
@@ -404,7 +403,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Shell",
     meaning: "Fertility/ abundance",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/shell%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvc2hlbGwgY29weS5zdmciLCJpYXQiOjE3MjMzNTY2MjcsImV4cCI6MTgwOTY3MDIyN30.bfJELm6MydlLx42AdjmfthwbqE6CFPrfp5smjDonTV0&t=2024-08-11T06%3A10%3A22.268Z",
+    icon: Shell,
     trigger_question:
       "What are your notions about prosperity, fertility, and abundance, and how do they hold importance?",
     uuid: "d_shell",
@@ -413,7 +412,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Treasure",
     meaning: "Discovery & Prosperity",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/TreasureChest%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvVHJlYXN1cmVDaGVzdCBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjQwNiwiZXhwIjoxODA5NjcwMDA2fQ.ko_JHtZ01xs99g3j-we_has8u1v4eGyR-QuELigeb4Q&t=2024-08-11T06%3A06%3A41.144Z",
+    icon: TreasureChest,
     trigger_question:
       "What do you consider to be your strongest natural talents, skills and gifts? ",
     uuid: "d_treasure_chest",
@@ -422,7 +421,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Tree",
     meaning: "Enlightenment",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Lotus%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTG90dXMgY29weS5zdmciLCJpYXQiOjE3MjMzNTU4NzMsImV4cCI6MTgwOTY2OTQ3M30.NaKzWCnFyHCs-DjarNkY8Mp-yVxU780Z4kOIOcF6EUg&t=2024-08-11T05%3A57%3A48.851Z",
+    icon: Lotus,
     trigger_question: "How do you view enlightenment",
     uuid: "d_tree",
   },
@@ -430,7 +429,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Rose",
     meaning: "Love & Friendship",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Rose%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvUm9zZSBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjExMiwiZXhwIjoxODA5NjY5NzEyfQ.aG8LELAn-AvB3U5TkiiWtfhv6vB4IAJhPrgTgcucYU0&t=2024-08-11T06%3A01%3A46.977Z",
+    icon: Rose,
     trigger_question:
       "What importance do loved ones, friends and relationships have and how do you see it evolving?",
     uuid: "d_rose",
@@ -439,7 +438,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Key",
     meaning: "Access",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Key%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvS2V5IGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU1NDY5LCJleHAiOjE4MDk2NjkwNjl9.bujtNKCAhPq9qAwBLSISZdxsvK3V9RZ6WOSbbzayiVs&t=2024-08-11T05%3A51%3A04.427Z",
+    icon: Key,
     trigger_question:
       "How can you allow doors to open, and accept or provide assistance ?",
     uuid: "d_key",
@@ -448,7 +447,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Trophy",
     meaning: "Recognition",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Trophy%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvVHJvcGh5IGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NDg5LCJleHAiOjE4MDk2NzAwODl9.9rgwuCzP7XbqqxBWyZPgtgGUAXEOmKMF7wetPxBwzAA&t=2024-08-11T06%3A08%3A04.806Z",
+    icon: Trophy,
     trigger_question:
       "What is something generally and currently happening that you would like recognition for? ",
     uuid: "d_trophy",
@@ -457,7 +456,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Skull & bones",
     meaning: "Endings",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/SkullCrossBones%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU2t1bGxDcm9zc0JvbmVzIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2MTk4LCJleHAiOjE4MDk2Njk3OTh9.egbWXxXTqxzMjA8UGc1pQBbrJi7pqwfpuCjhWpLMcC4&t=2024-08-11T06%3A03%3A13.063Z",
+    icon: SkullCrossBones,
     trigger_question:
       "What chapters in your life are closing, and are you creating a conscious ending?",
     uuid: "d_skull_bones",
@@ -466,7 +465,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Shark",
     meaning: "Boundaries",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Shark%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU2hhcmsgY29weS5zdmciLCJpYXQiOjE3MjMzNTYxNTAsImV4cCI6MTgwOTY2OTc1MH0.FqZQnlpLRDDJgxdQz45Zy0xhaWVNZbHcIKbfGAk79Pk&t=2024-08-11T06%3A02%3A25.503Z",
+    icon: Shark,
     trigger_question: "What are your thoughts about boundaries?",
     uuid: "d_shark",
   },
@@ -474,7 +473,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Leaf",
     meaning: "Vitality",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Leaf%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTGVhZiBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTUxOSwiZXhwIjoxODA5NjY5MTE5fQ.LwIfiKv6lusnfHUpGtksDGlw1XBcDXfLDHMbrPSrkz0&t=2024-08-11T05%3A51%3A54.411Z",
+    icon: Leaf,
     trigger_question: "What are your notions about health and fitness?",
     uuid: "d_leaf",
   },
@@ -482,7 +481,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Palm tree",
     meaning: "Travel & Leisure",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/PalmTree%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvUGFsbVRyZWUgY29weS5zdmciLCJpYXQiOjE3MjMzNTYwNTUsImV4cCI6MTgwOTY2OTY1NX0.ZdOcwK5tGCh8--yme4K-lbobTgspKOjkXA_CHb52wU0&t=2024-08-11T06%3A00%3A49.880Z",
+    icon: PalmTree,
     trigger_question:
       "What are your favorite ways to spend your leisure time, previous travel, or upcoming travel?",
     uuid: "d_palm_tree",
@@ -491,7 +490,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Anchor",
     meaning: "Security",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/anchor%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvYW5jaG9yIGNvcHkuc3ZnIiwiaWF0IjoxNzIzMzU2NTI5LCJleHAiOjE4MDk2NzAxMjl9.cqsZxmbf6M3lKOaalhGm0NZjH2IZlypz1lPM7yez3g8&t=2024-08-11T06%3A08%3A44.481Z",
+    icon: Anchor,
     trigger_question:
       "What role and priority does security play in your life right now and do you seek it?",
     uuid: "d_anchor",
@@ -500,7 +499,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Octopus",
     meaning: "Multi-tasking",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Octopus%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvT2N0b3B1cyBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NjAwOSwiZXhwIjoxODA5NjY5NjA5fQ.N_rb1dDneslC2Z5qZLeZ1mF3DiNRH0A9AAg20qfwBg8&t=2024-08-11T06%3A00%3A04.262Z",
+    icon: Octopus,
     trigger_question:
       "Do you handle many different activities at the same time?",
     uuid: "d_octopus",
@@ -509,7 +508,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Globe",
     meaning: "International issues",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Globe%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvR2xvYmUgY29weS5zdmciLCJpYXQiOjE3MjMzNTUzMDksImV4cCI6MTgwOTY2ODkwOX0.IdNzbnI0ugWP327zUW4rmXMLh9mwibnhbk_Suv1cwDU&t=2024-08-11T05%3A48%3A24.630Z",
+    icon: Globe,
     trigger_question:
       "Do you seek international travel and do you keep on top of world issue",
     uuid: "d_globe",
@@ -518,7 +517,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Sword",
     meaning: "Decisive",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/Sword%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvU3dvcmQgY29weS5zdmciLCJpYXQiOjE3MjMzNTYzNjMsImV4cCI6MTgwOTY2OTk2M30.CwWbMVAsikzoyBDeAinDdY2UXhqEWo4Cxo85gH2v4hg&t=2024-08-11T06%3A05%3A58.053Z",
+    icon: Sword,
     trigger_question: "Are you a quick decision maker?",
     uuid: "d_sword",
   },
@@ -526,7 +525,7 @@ export const daily_journal_questions = [
     journal_type: "daily_journal",
     name: "Nautical wheel",
     meaning: "Direction",
-    icon: "https://teyudjxlutkavyyigwwz.supabase.co/storage/v1/object/sign/new_icons/NauticalWheel%20copy.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJuZXdfaWNvbnMvTmF1dGljYWxXaGVlbCBjb3B5LnN2ZyIsImlhdCI6MTcyMzM1NTk0OSwiZXhwIjoxODA5NjY5NTQ5fQ.am5G7jd0Be6IJKklilzVHn-q8FE47Yk-s2WpIejRPZQ&t=2024-08-11T05%3A59%3A04.052Z",
+    icon: NauticalWheel,
     trigger_question:
       "Do you feel in control of your own destiny, or do you feel like other influences are directing you?",
     uuid: "d_nautical_wheel",

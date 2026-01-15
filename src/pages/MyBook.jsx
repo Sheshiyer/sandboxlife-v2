@@ -9,21 +9,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import GridList from "../components/GridList";
 import Breadcrumb from "../components/Breadcrumb";
 import { useGameMode } from '../context/GameModeContext';
+import GamePageLayout from '../components/game/GamePageLayout';
 
 export default function MyBook() {
   const { userId } = useParams();
-  const { isGameMode, disableGameMode } = useGameMode();
+  const { isGameMode } = useGameMode();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [entries, setEntries] = useState([]);
   const [chapters, setChapters] = useState([]);
-
-  // Disable game mode for classic-only pages
-  useEffect(() => {
-    if (isGameMode) {
-      disableGameMode();
-    }
-  }, []);
 
   useEffect(() => {
     fetchEntries(userId, 'book_journal', 50)
@@ -66,47 +60,40 @@ export default function MyBook() {
   };
 
   function formatDatetime(datetimeStr) {
-    // Create a Date object from the datetime string
     const date = new Date(datetimeStr);
-
-    // Function to extract date part (YYYY-MM-DD)
     function formatDate() {
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+      const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
-
       return `${year}-${month}-${day}`;
     }
-
-    // Function to extract time part (hh:mm)
     function formatTime() {
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
-
       return `${hours}:${minutes}`;
     }
-
-    // Return the desired formats
     return {
       date: formatDate(),
       time: formatTime(),
     };
   }
 
-  return (
+  const content = (
     <>
-      <TopBar toggleMenu={toggleMenu} />
-      {isMenuOpen && (
+      {!isGameMode && <TopBar toggleMenu={toggleMenu} />}
+      {!isGameMode && isMenuOpen && (
         <div className="fixed inset-0 z-50">
           <Menu toggleMenu={toggleMenu} />
         </div>
       )}
-      <Breadcrumb
-        items={[
-          { label: "Dashboard", to: `/home/${userId}` },
-          { label: "My Book" },
-        ]}
-      />
+      {!isGameMode && (
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", to: `/home/${userId}` },
+            { label: "My Book" },
+          ]}
+        />
+      )}
       <CalendarDateHeader
         currentDate={currentDate}
         onPrevClick={handlePrevClick}
@@ -114,12 +101,25 @@ export default function MyBook() {
       />
       <ToastContainer />
       
-
-      <div className="w-full px-4 md:px-8 py-6">
-        <div className="max-w-6xl mx-auto rounded-3xl border border-darkpapyrus bg-lightpapyrus p-4 shadow-sm">
+      <div className="w-full px-0 md:px-4 py-6">
+        <div className={`max-w-6xl mx-auto rounded-3xl border ${
+          isGameMode 
+            ? "border-yellow-500/20 bg-slate-900/40 backdrop-blur-md p-6 shadow-2xl" 
+            : "border-darkpapyrus bg-lightpapyrus p-4 shadow-sm"
+        }`}>
           <GridList items={entries} chapters={chapters} />
         </div>
       </div>
     </>
   );
+
+  return (
+    <GamePageLayout 
+      title={isGameMode ? "Tome of Tales" : "My Book"} 
+      icon="📖"
+    >
+      {content}
+    </GamePageLayout>
+  );
 }
+

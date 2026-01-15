@@ -6,17 +6,20 @@ import Breadcrumb from "../components/Breadcrumb";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "../utils/supabase";
-import { PencilIcon, CameraIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, CameraIcon, FireIcon, TrophyIcon, StarIcon } from "@heroicons/react/24/outline";
 import { useGameMode } from "../context/GameModeContext";
+import GamePageLayout from "../components/game/GamePageLayout";
+import { getUserProgression } from "../utils/progression";
 
 const ProfilePage = () => {
   const { userId } = useParams();
-  const { isGameMode, disableGameMode } = useGameMode();
+  const { isGameMode } = useGameMode();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [progression, setProgression] = useState(null);
   const [profile, setProfile] = useState({
     avatar_url: "",
     display_name: "",
@@ -38,39 +41,39 @@ const ProfilePage = () => {
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  // Disable game mode for classic-only pages
   useEffect(() => {
-    if (isGameMode) {
-      disableGameMode();
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data, error } = await supabase
+        // Fetch profile
+        const { data: profileData, error: profileError } = await supabase
           .from("user_profiles")
           .select("*")
           .eq("user_id", user.id)
           .single();
 
-        if (error && error.code !== "PGRST116") {
+        if (profileError && profileError.code !== "PGRST116") {
           toast.error("Failed to load profile data");
-        } else if (data) {
+        } else if (profileData) {
           setProfile((prev) => ({
             ...prev,
-            ...data,
+            ...profileData,
             email: user.email || "",
           }));
         } else {
           setProfile((prev) => ({ ...prev, email: user.email || "" }));
         }
+
+        // Fetch progression
+        const progResult = await getUserProgression(user.id);
+        if (progResult.success) {
+          setProgression(progResult.data);
+        }
       }
       setLoading(false);
     };
 
-    fetchProfile();
+    fetchData();
   }, []);
 
   const handleChange = (field, value) => {
@@ -169,321 +172,430 @@ const ProfilePage = () => {
   if (loading) {
     return (
       <>
-        <TopBar toggleMenu={toggleMenu} />
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red"></div>
+        {!isGameMode && <TopBar toggleMenu={toggleMenu} />}
+        <div className={`flex items-center justify-center min-h-screen ${isGameMode ? "bg-[#0a0a0a]" : ""}`}>
+          <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${isGameMode ? "border-yellow-500" : "border-red"}`}></div>
         </div>
       </>
     );
   }
 
+  const content = (
+    <div className="max-w-2xl mx-auto pb-12">
+      {/* Profile Header */}
+      <div className={`flex flex-col items-center mb-12 animate-reveal`}>
+        <div className="relative mb-6">
+          <div className={`p-1 rounded-full ${isGameMode ? "bg-gradient-to-tr from-yellow-600 to-yellow-300 shadow-[0_0_20px_rgba(255,215,0,0.3)]" : ""}`}>
+            {profile.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt={displayName}
+                className={`w-32 h-32 rounded-full object-cover border-4 ${isGameMode ? "border-slate-900" : "border-white shadow-lg"}`}
+              />
+            ) : (
+              <div className={`w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold border-4 ${
+                isGameMode ? "bg-slate-800 text-yellow-500 border-slate-900" : "bg-red text-white border-white shadow-lg"
+              }`}>
+                {displayName[0]?.toUpperCase()}
+              </div>
+            )}
+          </div>
+          
+          {isGameMode && progression && (
+            <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-yellow-500 text-slate-950 flex items-center justify-center text-lg font-bold border-4 border-slate-900 shadow-lg">
+              {progression.level}
+            </div>
+          )}
+          
+          <label className={`absolute bottom-0 right-0 p-2.5 rounded-full shadow-xl cursor-pointer transition-all hover:scale-110 ${
+            isGameMode ? "bg-yellow-500 text-slate-900" : "bg-white text-slate-600 hover:bg-lightpapyrus"
+          }`}>
+            <CameraIcon className="w-5 h-5" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+              disabled={uploading}
+            />
+          </label>
+          
+          {uploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full backdrop-blur-[2px]">
+              <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${isGameMode ? "border-yellow-500" : "border-red"}`}></div>
+            </div>
+          )}
+        </div>
+        
+        <h1 className={`text-3xl font-serif font-bold mb-1 ${isGameMode ? "text-yellow-500 drop-shadow-md" : "text-slate-900"}`}>
+          {displayName}
+        </h1>
+        
+        {isGameMode && progression ? (
+          <p className="text-yellow-500/70 font-serif uppercase tracking-[0.2em] mb-4">
+            {progression.title}
+          </p>
+        ) : (
+          <p className="text-slate-500 mb-4">{profile.email}</p>
+        )}
+
+        {isGameMode && progression && (
+          <div className="w-full max-w-xs mb-6 space-y-2">
+            <div className="flex justify-between text-[10px] font-serif text-yellow-500/50 uppercase tracking-widest">
+              <span>Experience</span>
+              <span>{progression.xp} / {progression.xp_for_next_level} XP</span>
+            </div>
+            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden border border-white/5">
+              <div 
+                className="h-full bg-gradient-to-r from-yellow-600 to-yellow-300 shadow-[0_0_10px_rgba(255,215,0,0.3)] transition-all duration-1000"
+                style={{ width: `${progression.xp_percentage}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {!isEditing && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 font-bold ${
+              isGameMode 
+                ? "bg-slate-800 text-yellow-500 border border-yellow-500/30 hover:bg-slate-700" 
+                : "bg-red text-white hover:bg-red/90"
+            }`}
+          >
+            <PencilIcon className="w-4 h-4" />
+            {isGameMode ? "Modify Appearance" : "Edit Profile"}
+          </button>
+        )}
+      </div>
+
+      {isGameMode && progression && !isEditing && (
+        <div className="grid grid-cols-3 gap-4 mb-8 animate-reveal" style={{ animationDelay: '100ms' }}>
+          <div className="bg-slate-900/40 border border-yellow-500/10 rounded-2xl p-4 text-center backdrop-blur-md">
+            <FireIcon className="w-6 h-6 text-orange-500 mx-auto mb-1" />
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-serif">Streak</p>
+            <p className="text-xl font-bold text-slate-100">{progression.streak_days} Days</p>
+          </div>
+          <div className="bg-slate-900/40 border border-yellow-500/10 rounded-2xl p-4 text-center backdrop-blur-md">
+            <TrophyIcon className="w-6 h-6 text-yellow-500 mx-auto mb-1" />
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-serif">Entries</p>
+            <p className="text-xl font-bold text-slate-100">{progression.total_entries}</p>
+          </div>
+          <div className="bg-slate-900/40 border border-yellow-500/10 rounded-2xl p-4 text-center backdrop-blur-md">
+            <StarIcon className="w-6 h-6 text-sky-500 mx-auto mb-1" />
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-serif">Longest</p>
+            <p className="text-xl font-bold text-slate-100">{progression.longest_streak}</p>
+          </div>
+        </div>
+      )}
+
+      {isEditing ? (
+        /* Edit Mode */
+        <div className="space-y-8 animate-reveal">
+          {/* Sections shared styling */}
+          <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+            isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+          }`}>
+            <h2 className={`text-lg font-serif font-bold mb-6 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+              Basic Information
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  value={profile.display_name}
+                  onChange={(e) => handleChange("display_name", e.target.value)}
+                  placeholder="Your name in the realm"
+                  className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 ${
+                    isGameMode 
+                      ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                      : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                  }`}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    value={profile.date_of_birth || ""}
+                    onChange={(e) => handleChange("date_of_birth", e.target.value)}
+                    className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 ${
+                      isGameMode 
+                        ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                        : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                    Gender
+                  </label>
+                  <select
+                    value={profile.gender || ""}
+                    onChange={(e) => handleChange("gender", e.target.value)}
+                    className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 ${
+                      isGameMode 
+                        ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                        : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                    }`}
+                  >
+                    <option value="">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="undisclosed">Prefer not to say</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Contact Info */}
+          <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+            isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+          }`}>
+            <h2 className={`text-lg font-serif font-bold mb-6 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+              Contact Information
+            </h2>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                    Mobile Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={profile.mobile_phone || ""}
+                    onChange={(e) => handleChange("mobile_phone", e.target.value)}
+                    className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 ${
+                      isGameMode 
+                        ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                        : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                    Website
+                  </label>
+                  <input
+                    type="url"
+                    value={profile.website || ""}
+                    onChange={(e) => handleChange("website", e.target.value)}
+                    className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 ${
+                      isGameMode 
+                        ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                        : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                    }`}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  value={profile.street_address || ""}
+                  onChange={(e) => handleChange("street_address", e.target.value)}
+                  className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 ${
+                    isGameMode 
+                      ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                      : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                  }`}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* About */}
+          <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+            isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+          }`}>
+            <h2 className={`text-lg font-serif font-bold mb-6 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+              Adventurer Bio
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                  About Me
+                </label>
+                <textarea
+                  value={profile.about_me || ""}
+                  onChange={(e) => handleChange("about_me", e.target.value)}
+                  rows={4}
+                  placeholder="Tell us your story..."
+                  className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 resize-none ${
+                    isGameMode 
+                      ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                      : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                  }`}
+                />
+              </div>
+              <div>
+                <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 text-left ${isGameMode ? "text-slate-400" : "text-slate-700"}`}>
+                  Interests & Hobbies
+                </label>
+                <textarea
+                  value={profile.hobbies || ""}
+                  onChange={(e) => handleChange("hobbies", e.target.value)}
+                  rows={3}
+                  className={`w-full px-4 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 resize-none ${
+                    isGameMode 
+                      ? "bg-slate-800 border-white/5 text-slate-100 focus:ring-yellow-500/50" 
+                      : "bg-white border-darkpapyrus text-slate-800 focus:ring-red"
+                  }`}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Actions */}
+          <div className="flex gap-4 justify-end">
+            <button
+              onClick={() => setIsEditing(false)}
+              className={`px-8 py-3 rounded-xl font-bold transition-all active:scale-95 ${
+                isGameMode 
+                  ? "bg-slate-800 text-slate-300 border border-white/5 hover:bg-slate-700" 
+                  : "bg-white border border-darkpapyrus text-slate-700 hover:bg-lightpapyrus"
+              }`}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={saveProfile}
+              disabled={saving}
+              className={`px-8 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:opacity-50 ${
+                isGameMode 
+                  ? "bg-yellow-500 text-slate-950 hover:bg-yellow-400" 
+                  : "bg-red text-white hover:bg-red/90"
+              }`}
+            >
+              {saving ? "Processing..." : isGameMode ? "Save Attributes" : "Save Changes"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* View Mode */
+        <div className="space-y-6 animate-reveal" style={{ animationDelay: '200ms' }}>
+          {/* About Section */}
+          {profile.about_me && (
+            <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+              isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+            }`}>
+              <h2 className={`text-lg font-serif font-bold mb-4 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+                The Legend
+              </h2>
+              <p className={`text-left whitespace-pre-wrap leading-relaxed ${isGameMode ? "text-slate-300 italic font-serif" : "text-slate-600"}`}>
+                {profile.about_me}
+              </p>
+            </section>
+          )}
+
+          {/* Details Grid */}
+          <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+            isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+          }`}>
+            <h2 className={`text-lg font-serif font-bold mb-6 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+              Adventurer Details
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-left">
+              {profile.date_of_birth && (
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest font-bold mb-1 ${isGameMode ? "text-slate-500" : "text-slate-400"}`}>
+                    Date of Origin
+                  </p>
+                  <p className={`font-medium ${isGameMode ? "text-slate-200" : "text-slate-700"}`}>
+                    {new Date(profile.date_of_birth).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                  </p>
+                </div>
+              )}
+              {profile.gender && (
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest font-bold mb-1 ${isGameMode ? "text-slate-500" : "text-slate-400"}`}>
+                    Identity
+                  </p>
+                  <p className={`font-medium capitalize ${isGameMode ? "text-slate-200" : "text-slate-700"}`}>
+                    {profile.gender}
+                  </p>
+                </div>
+              )}
+              {profile.website && (
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest font-bold mb-1 ${isGameMode ? "text-slate-500" : "text-slate-400"}`}>
+                    External Realm
+                  </p>
+                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className={`font-medium hover:underline flex items-center gap-1 ${isGameMode ? "text-yellow-500" : "text-red"}`}>
+                    {profile.website.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Hobbies */}
+          {profile.hobbies && (
+            <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+              isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+            }`}>
+              <h2 className={`text-lg font-serif font-bold mb-4 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+                Skills & Interests
+              </h2>
+              <p className={`text-left whitespace-pre-wrap leading-relaxed ${isGameMode ? "text-slate-300" : "text-slate-600"}`}>
+                {profile.hobbies}
+              </p>
+            </section>
+          )}
+
+          {/* Work */}
+          {profile.work_education && (
+            <section className={`rounded-3xl border p-6 md:p-8 shadow-xl ${
+              isGameMode ? "bg-slate-900/40 border-yellow-500/20 backdrop-blur-md" : "bg-lightpapyrus border-darkpapyrus"
+            }`}>
+              <h2 className={`text-lg font-serif font-bold mb-4 text-left ${isGameMode ? "text-yellow-500" : "text-slate-800"}`}>
+                Guild History
+              </h2>
+              <p className={`text-left whitespace-pre-wrap leading-relaxed ${isGameMode ? "text-slate-300" : "text-slate-600"}`}>
+                {profile.work_education}
+              </p>
+            </section>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
-      <TopBar toggleMenu={toggleMenu} />
-      {isMenuOpen && (
+      {!isGameMode && <TopBar toggleMenu={toggleMenu} />}
+      {!isGameMode && isMenuOpen && (
         <div className="fixed inset-0 z-50">
           <Menu toggleMenu={toggleMenu} />
         </div>
       )}
       <ToastContainer />
 
-      <Breadcrumb
-        items={[
-          { label: "Dashboard", to: `/home/${userId}` },
-          { label: "Profile" },
-        ]}
-      />
+      {!isGameMode && (
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", to: `/home/${userId}` },
+            { label: "Profile" },
+          ]}
+        />
+      )}
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        {/* Profile Header */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="relative mb-4">
-            {profile.avatar_url ? (
-              <img
-                src={profile.avatar_url}
-                alt={displayName}
-                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-red text-white flex items-center justify-center text-3xl font-bold border-4 border-white shadow-lg">
-                {displayName[0]?.toUpperCase()}
-              </div>
-            )}
-            <label className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-lightpapyrus transition-colors">
-              <CameraIcon className="w-5 h-5 text-slate-600" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                disabled={uploading}
-              />
-            </label>
-            {uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded-full">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red"></div>
-              </div>
-            )}
-          </div>
-          <h1 className="text-2xl font-serif font-bold text-slate-900">{displayName}</h1>
-          <p className="text-slate-500">{profile.email}</p>
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="mt-4 flex items-center gap-2 px-4 py-2 bg-red text-white rounded-xl hover:bg-red/90 transition-colors"
-            >
-              <PencilIcon className="w-4 h-4" />
-              Edit Profile
-            </button>
-          )}
-        </div>
-
-        {isEditing ? (
-          /* Edit Mode */
-          <div className="space-y-6">
-            {/* Basic Info */}
-            <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 text-left">Basic Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Display Name</label>
-                  <input
-                    type="text"
-                    value={profile.display_name}
-                    onChange={(e) => handleChange("display_name", e.target.value)}
-                    placeholder="Your display name"
-                    className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Date of Birth</label>
-                    <input
-                      type="date"
-                      value={profile.date_of_birth || ""}
-                      onChange={(e) => handleChange("date_of_birth", e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Gender</label>
-                    <select
-                      value={profile.gender || ""}
-                      onChange={(e) => handleChange("gender", e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                    >
-                      <option value="">Select...</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                      <option value="undisclosed">Prefer not to say</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Contact Info */}
-            <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 text-left">Contact Information</h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Mobile Phone</label>
-                    <input
-                      type="tel"
-                      value={profile.mobile_phone || ""}
-                      onChange={(e) => handleChange("mobile_phone", e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Website</label>
-                    <input
-                      type="url"
-                      value={profile.website || ""}
-                      onChange={(e) => handleChange("website", e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Street Address</label>
-                  <input
-                    type="text"
-                    value={profile.street_address || ""}
-                    onChange={(e) => handleChange("street_address", e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                  />
-                </div>
-                <div className="w-1/3">
-                  <label className="block text-sm font-medium text-slate-700 mb-2 text-left">ZIP Code</label>
-                  <input
-                    type="text"
-                    value={profile.zip || ""}
-                    onChange={(e) => handleChange("zip", e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* About */}
-            <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 text-left">About Me</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Bio</label>
-                  <textarea
-                    value={profile.about_me || ""}
-                    onChange={(e) => handleChange("about_me", e.target.value)}
-                    rows={4}
-                    placeholder="Tell us about yourself..."
-                    className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Hobbies & Interests</label>
-                  <textarea
-                    value={profile.hobbies || ""}
-                    onChange={(e) => handleChange("hobbies", e.target.value)}
-                    rows={3}
-                    placeholder="What do you enjoy doing?"
-                    className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2 text-left">Entertainment</label>
-                  <textarea
-                    value={profile.entertainment || ""}
-                    onChange={(e) => handleChange("entertainment", e.target.value)}
-                    rows={3}
-                    placeholder="Favorite movies, music, TV shows..."
-                    className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red resize-none"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* Work & Education */}
-            <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 text-left">Work & Education</h2>
-              <textarea
-                value={profile.work_education || ""}
-                onChange={(e) => handleChange("work_education", e.target.value)}
-                rows={4}
-                placeholder="Your work and education history..."
-                className="w-full px-3 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red resize-none"
-              />
-            </section>
-
-            {/* Privacy */}
-            <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 text-left">Privacy</h2>
-              <div className="flex items-center justify-between">
-                <div className="text-left">
-                  <p className="text-sm font-medium text-slate-700">Public Profile</p>
-                  <p className="text-xs text-slate-500">Allow others to view your profile</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleChange("is_public", !profile.is_public)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    profile.is_public ? "bg-red" : "bg-slate-300"
-                  }`}
-                  role="switch"
-                  aria-checked={profile.is_public}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      profile.is_public ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-            </section>
-
-            {/* Actions */}
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-6 py-2 rounded-xl border border-darkpapyrus bg-white text-slate-700 hover:bg-lightpapyrus transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={saveProfile}
-                disabled={saving}
-                className="px-6 py-2 rounded-xl bg-red text-white hover:bg-red/90 disabled:opacity-50 transition-colors"
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* View Mode */
-          <div className="space-y-6">
-            {/* About Section */}
-            {profile.about_me && (
-              <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2 text-left">About</h2>
-                <p className="text-slate-600 text-left whitespace-pre-wrap">{profile.about_me}</p>
-              </section>
-            )}
-
-            {/* Details Grid */}
-            <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 text-left">Details</h2>
-              <div className="grid grid-cols-2 gap-4 text-left">
-                {profile.date_of_birth && (
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wide">Birthday</p>
-                    <p className="text-slate-700">{new Date(profile.date_of_birth).toLocaleDateString()}</p>
-                  </div>
-                )}
-                {profile.gender && (
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wide">Gender</p>
-                    <p className="text-slate-700 capitalize">{profile.gender}</p>
-                  </div>
-                )}
-                {profile.website && (
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wide">Website</p>
-                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-red hover:underline">
-                      {profile.website}
-                    </a>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Hobbies */}
-            {profile.hobbies && (
-              <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2 text-left">Hobbies & Interests</h2>
-                <p className="text-slate-600 text-left whitespace-pre-wrap">{profile.hobbies}</p>
-              </section>
-            )}
-
-            {/* Entertainment */}
-            {profile.entertainment && (
-              <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2 text-left">Entertainment</h2>
-                <p className="text-slate-600 text-left whitespace-pre-wrap">{profile.entertainment}</p>
-              </section>
-            )}
-
-            {/* Work */}
-            {profile.work_education && (
-              <section className="rounded-2xl border border-darkpapyrus bg-lightpapyrus p-6">
-                <h2 className="text-lg font-semibold text-slate-800 mb-2 text-left">Work & Education</h2>
-                <p className="text-slate-600 text-left whitespace-pre-wrap">{profile.work_education}</p>
-              </section>
-            )}
-          </div>
-        )}
-      </main>
+      <GamePageLayout 
+        title={isGameMode ? "Character Profile" : "Profile"} 
+        icon="👤"
+      >
+        {content}
+      </GamePageLayout>
     </>
   );
 };

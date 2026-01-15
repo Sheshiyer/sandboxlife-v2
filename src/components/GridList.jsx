@@ -4,10 +4,12 @@ import PropTypes from "prop-types";
 import JournalEntry from "./JournalEntry";
 import EntryDetails from "./EntryDetails";
 import { formatDatetime, formatJournalType } from "../utils/formatters";
+import { useGameMode } from "../context/GameModeContext";
 
 const GridList = ({ items, chapters = [] }) => {
   const [selected, setSelected] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState("All");
+  const { isGameMode } = useGameMode();
 
   const handleOnClick = (data) => {
     setSelected(data);
@@ -17,19 +19,37 @@ const GridList = ({ items, chapters = [] }) => {
     <div className="flex flex-col items-start justify-start gap-6 w-full">
       {chapters.length > 0 && (
         <div className="flex flex-row items-center justify-start gap-3">
-          <p className="text-sm font-medium text-darkpapyrus">Filter by chapter:</p>
+          <p className={`text-sm font-medium ${isGameMode ? "text-yellow-500/70" : "text-darkpapyrus"}`}>Filter by chapter:</p>
           <Menu>
-            <MenuButton className="px-4 py-2 bg-white border border-darkpapyrus rounded-lg text-sm font-medium hover:bg-bgpapyrus transition-colors">
+            <MenuButton className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+              isGameMode 
+                ? "bg-slate-900/60 border-yellow-500/30 text-yellow-500 hover:bg-slate-800" 
+                : "bg-white border-darkpapyrus text-slate-700 hover:bg-bgpapyrus"
+            }`}>
               {selectedChapter}
             </MenuButton>
             <MenuItems
               anchor="bottom"
-              className="absolute z-10 w-48 py-2 mt-2 border border-darkpapyrus rounded-lg shadow-lg bg-lightpapyrus"
+              className={`absolute z-10 w-48 py-2 mt-2 border rounded-lg shadow-xl ${
+                isGameMode 
+                  ? "bg-slate-900 border-yellow-500/30 text-slate-200" 
+                  : "bg-lightpapyrus border-darkpapyrus text-slate-700"
+              }`}
             >
+              <MenuItem
+                className={`block px-4 py-2 text-sm cursor-pointer transition-colors ${
+                  isGameMode ? "hover:bg-slate-800 hover:text-yellow-500" : "hover:bg-bgpapyrus"
+                }`}
+                onClick={() => setSelectedChapter("All")}
+              >
+                <p>All Chapters</p>
+              </MenuItem>
               {chapters?.map((chapter, index) => (
                 <MenuItem
                   key={index}
-                  className="block px-4 py-2 text-sm hover:bg-bgpapyrus cursor-pointer transition-colors"
+                  className={`block px-4 py-2 text-sm cursor-pointer transition-colors ${
+                    isGameMode ? "hover:bg-slate-800 hover:text-yellow-500" : "hover:bg-bgpapyrus"
+                  }`}
                   onClick={() => setSelectedChapter(chapter)}
                 >
                   <p>{chapter}</p>
@@ -61,6 +81,7 @@ const GridList = ({ items, chapters = [] }) => {
                   message={d.journal_entry}
                   time={formatDatetime(d.created_at).time}
                   selected={selected}
+                  index={index}
                 />
               </div>
             ) : null
@@ -82,6 +103,7 @@ const GridList = ({ items, chapters = [] }) => {
     </div>
   );
 };
+
 
 GridList.propTypes = {
   items: PropTypes.array.isRequired,

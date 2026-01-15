@@ -1,5 +1,6 @@
 import { Children, isValidElement } from 'react';
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 
 const ZONE_CONFIG = {
     mind: { label: 'Mind', color: 'bg-blue-900/40', border: 'border-blue-500/30', icon: '🧠' }, // Blue
@@ -8,7 +9,7 @@ const ZONE_CONFIG = {
     heart: { label: 'Heart', color: 'bg-green-900/40', border: 'border-green-500/30', icon: '❤️' }, // Green
 };
 
-const QuadrantZone = ({ id, config, children, decayLevel = 0 }) => (
+const QuadrantZone = ({ config, children, decayLevel = 0 }) => (
     <div className={clsx(
         "relative h-full rounded-2xl border-2 flex flex-col p-4 transition-all duration-500 overflow-hidden",
         config.color,
@@ -45,21 +46,22 @@ const QuadrantZone = ({ id, config, children, decayLevel = 0 }) => (
     </div>
 );
 
+QuadrantZone.propTypes = {
+    config: PropTypes.shape({
+        color: PropTypes.string,
+        border: PropTypes.string,
+        icon: PropTypes.string,
+        label: PropTypes.string,
+    }).isRequired,
+    children: PropTypes.node,
+    decayLevel: PropTypes.number,
+};
+
 const QuadrantsBoard = ({ children, decayState = {} }) => {
-    // Sort children into zones (mock logic for now, assumes children match zones)
-    // In a real app, you'd filter the children array by 'quadrant' prop.
-
-    // For demonstration, we'll just render the grid skeleton.
-    // The consumer (DashboardV2) will need to pass categorized lists.
-
     return (
         <div className="w-full h-[calc(100vh-140px)] grid grid-cols-2 grid-rows-2 gap-6 p-4">
             {Object.entries(ZONE_CONFIG).map(([key, config]) => (
-                <QuadrantZone key={key} id={key} config={config} decayLevel={decayState[key] || 0}>
-                    {/* This is where we will inject the cards for this zone */}
-                    {/* For now, just a placeholder if empty */}
-                    {/* {children} */}
-                    {/* Filter children for this quadrant */}
+                <QuadrantZone key={key} config={config} decayLevel={decayState[key] || 0}>
                     {Children.map(children, child => {
                         if (isValidElement(child) && child.props['data-quadrant'] === key) {
                             return child;
@@ -70,6 +72,11 @@ const QuadrantsBoard = ({ children, decayState = {} }) => {
             ))}
         </div>
     );
+};
+
+QuadrantsBoard.propTypes = {
+    children: PropTypes.node,
+    decayState: PropTypes.object,
 };
 
 export default QuadrantsBoard;

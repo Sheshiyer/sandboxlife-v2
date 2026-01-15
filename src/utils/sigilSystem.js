@@ -127,6 +127,8 @@ export const getSigilData = (meaningOrArray, journalType) => {
     };
 };
 
+import { resolveIcon } from "./iconResolver";
+
 /**
  * Gets display data for a journal entry card
  * @param {object} entry - The journal entry from database
@@ -137,7 +139,7 @@ export const getCardDisplayData = (entry) => {
     
     return {
         title: entry.journal_meaning || formatJournalTypeName(entry.journal_type),
-        icon: entry.journal_icon, // Use actual icon URL from database
+        icon: resolveIcon(entry), // Use the resolver to ensure stable icons
         ...sigilData,
     };
 };

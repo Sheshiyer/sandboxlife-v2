@@ -40,7 +40,7 @@ const SidebarMenu = ({ toggleMenu, isDnDTheme = false }) => {
 
   const navigateToHome = () => {
     if (userId) {
-      navigate(`/home/${userId}`);
+      navigate(isDnDTheme ? `/dashboard-v2/${userId}` : `/home/${userId}`);
       toggleMenu();
     }
   };
@@ -163,7 +163,7 @@ const SidebarMenu = ({ toggleMenu, isDnDTheme = false }) => {
           <div className="grid gap-6 lg:grid-cols-[2fr_1fr] relative z-10">
             <div className="grid grid-cols-2 gap-4">
               <Link
-                to={`/home/${userId}`}
+                to={isDnDTheme ? `/dashboard-v2/${userId}` : `/home/${userId}`}
                 onClick={toggleMenu}
                 className={styles.cardLarge}
               >
@@ -231,7 +231,7 @@ const SidebarMenu = ({ toggleMenu, isDnDTheme = false }) => {
                 </div>
               </div>
               <div className={styles.card}>
-                <h3 className="text-base font-semibold text-slate-800">Today's Focus</h3>
+                <h3 className="text-base font-semibold text-slate-800">Today&apos;s Focus</h3>
                 <p className={`mt-1 text-sm ${styles.cardText}`}>
                   Keep your reflection steady and intentional.
                 </p>

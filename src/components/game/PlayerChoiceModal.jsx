@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useGameMode } from '../../context/GameModeContext';
+import PropTypes from 'prop-types';
 
 const CHOICE_CARDS = [
     { id: 'daily_journal', title: 'Daily Quest', icon: '📜', desc: 'Record your daily reflections and experiences.', color: 'from-blue-600 to-blue-900', border: 'border-blue-400', route: '/dailyjournal' },
@@ -82,6 +83,12 @@ const PlayerChoiceModal = ({ isOpen, onClose, onSelect }) => {
             </div>
         </div>
     );
+};
+
+PlayerChoiceModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSelect: PropTypes.func.isRequired,
 };
 
 export default PlayerChoiceModal;

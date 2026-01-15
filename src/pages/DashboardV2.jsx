@@ -8,7 +8,7 @@ import PlayerChoiceModal from "../components/game/PlayerChoiceModal";
 import ScribeEditor from "../components/game/ScribeEditor";
 import Menu from "../components/Menu";
 import { fetchDashboardV2Entries } from "../utils/dashboardV2";
-import { formatDatetime, formatJournalType } from "../utils/formatters";
+import { formatDatetime } from "../utils/formatters";
 import { toast } from 'react-toastify';
 
 import { getCardDisplayData } from "../utils/sigilSystem";
@@ -22,7 +22,7 @@ const DashboardV2 = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
-  const [editorContext, setEditorContext] = useState(null);
+  const [editorContext] = useState(null);
   const [viewMode, setViewMode] = useState('board'); // 'board' or 'map'
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -90,7 +90,7 @@ const DashboardV2 = () => {
     });
     setEntries(prev => [...prev, {
       id: Date.now(),
-      journal_type: editorContext.id,
+      journal_type: editorContext?.id || 'daily_journal',
       journal_meaning: 'New Entry',
       created_at: new Date().toISOString(),
       journal_entry: content
@@ -128,7 +128,6 @@ const DashboardV2 = () => {
                     rarity={card.rarity}
                     icon={card.icon}
                     scheme={card.scheme}
-                    quadrant={card.quadrant}
                   />
                 </div>
               ))}
@@ -170,5 +169,6 @@ const DashboardV2 = () => {
     </>
   );
 };
+
 
 export default DashboardV2;

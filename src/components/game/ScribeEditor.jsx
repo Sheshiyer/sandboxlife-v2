@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import clsx from 'clsx';
 import '../../styles/game-theme.css';
+import PropTypes from 'prop-types';
 
 const ScribeEditor = ({ isOpen, onClose, context, onSave }) => {
     const [content, setContent] = useState('');
@@ -36,7 +36,7 @@ const ScribeEditor = ({ isOpen, onClose, context, onSave }) => {
                         {context?.title || 'Chronicle'}
                     </h2>
                     <div className="text-xl font-serif text-[#5D4037] italic leading-relaxed">
-                        "{context?.desc || 'What adventure calls to you today?'}"
+                        &ldquo;{context?.desc || 'What adventure calls to you today?'}&rdquo;
                     </div>
 
                     <div className="absolute bottom-12 left-12 opacity-50">
@@ -97,6 +97,17 @@ const ScribeEditor = ({ isOpen, onClose, context, onSave }) => {
             </motion.div>
         </div>
     );
+};
+
+ScribeEditor.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    context: PropTypes.shape({
+        title: PropTypes.string,
+        desc: PropTypes.string,
+        icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    }),
+    onSave: PropTypes.func.isRequired,
 };
 
 export default ScribeEditor;

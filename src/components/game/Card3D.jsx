@@ -2,6 +2,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useState } from 'react';
 import clsx from 'clsx';
 import { SparklesIcon } from '@heroicons/react/24/solid';
+import PropTypes from 'prop-types';
 
 const Card3D = ({
     title,
@@ -9,7 +10,6 @@ const Card3D = ({
     rarity = 'common',
     icon,
     scheme,
-    quadrant,
     onClick
 }) => {
     const [isFlipped, setIsFlipped] = useState(false);
@@ -80,7 +80,7 @@ const Card3D = ({
                         <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400 font-serif">
                             {title}
                         </h3>
-                        <p className={clsx("text-sm mt-1", scheme?.text || "text-slate-400")}>{subtitle}</p>
+                        <h4 className={clsx("text-sm mt-1", scheme?.text || "text-slate-400")}>{subtitle}</h4>
                     </div>
 
                     <div className={clsx(
@@ -88,7 +88,7 @@ const Card3D = ({
                         scheme?.bg ? scheme.bg + "/50" : "bg-slate-800",
                         scheme?.border ? scheme.border + "/30" : "border-slate-700/50"
                     )}>
-                        {icon && icon.startsWith('http') ? (
+                        {icon && typeof icon === 'string' && icon.startsWith('http') ? (
                             <img 
                                 src={icon} 
                                 alt={title || 'Journal icon'} 
@@ -103,7 +103,7 @@ const Card3D = ({
                         <div className="h-1 w-full bg-slate-700 rounded-full overflow-hidden">
                             <div className={clsx("h-full w-2/3", scheme?.text?.replace('text-', 'bg-') || "bg-yellow-500")} />
                         </div>
-                        <p className={clsx("text-xs text-right mt-1", scheme?.text || "text-yellow-500")}>Lcvl 3</p>
+                        <p className={clsx("text-xs text-right mt-1", scheme?.text || "text-yellow-500")}>Level 3</p>
                     </div>
                 </div>
 
@@ -128,6 +128,19 @@ const Card3D = ({
             </motion.div>
         </div>
     );
+};
+
+Card3D.propTypes = {
+    title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
+    rarity: PropTypes.string,
+    icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    scheme: PropTypes.shape({
+        text: PropTypes.string,
+        bg: PropTypes.string,
+        border: PropTypes.string,
+    }),
+    onClick: PropTypes.func
 };
 
 export default Card3D;

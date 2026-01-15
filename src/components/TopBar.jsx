@@ -427,6 +427,7 @@ import { useAccessibility } from "../context/AccessibilityContext";
 import { getPendingRequests, subscribeToFriendRequests } from "../utils/social";
 import sandboxlife from "../assets/sandboxlife.png";
 import "../App.css"; 
+import { useGameMode } from "../context/GameModeContext";
 
 const TopBar = ({ toggleMenu }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -438,6 +439,7 @@ const TopBar = ({ toggleMenu }) => {
   const currentPath = pathname.split("/")[1];
   const navigate = useNavigate();
   const { fontSize, increaseFontSize, decreaseFontSize, FONT_SIZES } = useAccessibility();
+  const { isGameMode } = useGameMode();
 
   const handleDateChange = (date) => {
     const formattedDate = new Date(date).toISOString().slice(0, 7); // Format as YYYY-MM
@@ -448,6 +450,11 @@ const TopBar = ({ toggleMenu }) => {
     }
   };
   
+  const handleHomeClick = () => {
+    if (userId) {
+      navigate(isGameMode ? `/dashboard-v2/${userId}` : `/home/${userId}`);
+    }
+  };
 
   useEffect(() => {
     const getUserIdFromStorage = () => {
@@ -486,26 +493,27 @@ const TopBar = ({ toggleMenu }) => {
           <button
             type="button"
             onClick={toggleMenu}
-            className="rounded-full border border-darkpapyrus bg-lightpapyrus p-2 shadow-sm"
+            className="rounded-full border border-darkpapyrus bg-lightpapyrus p-2 shadow-sm transition-all active:scale-95 hover:bg-bgpapyrus"
             aria-label="Open menu"
           >
-            <Bars4Icon className="w-5 h-5" />
+            <Bars4Icon className="w-5 h-5 text-slate-700" />
           </button>
           <button
             type="button"
-            className="rounded-full border border-darkpapyrus bg-lightpapyrus p-2 shadow-sm"
+            onClick={handleHomeClick}
+            className="rounded-full border border-darkpapyrus bg-lightpapyrus p-2 shadow-sm transition-all active:scale-95 hover:bg-bgpapyrus"
             aria-label="Home"
           >
-            <HomeIcon className="w-5 h-5" />
+            <HomeIcon className="w-5 h-5 text-slate-700" />
           </button>
-          <div className="flex justify-center">
-            <a href="#">
+          <div className="flex justify-center ml-1">
+            <button onClick={handleHomeClick} className="hover:opacity-80 transition-opacity">
               <img
                 alt="Sandbox Life"
                 style={{ height: "28px", objectFit: "contain" }}
                 src={sandboxlife}
               />
-            </a>
+            </button>
           </div>
         </div>
         <div

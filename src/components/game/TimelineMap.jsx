@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { getSigilData } from '../../utils/sigilSystem';
+import PropTypes from 'prop-types';
+import { resolveIcon } from '../../utils/iconResolver';
 
 const TimelineMap = ({ entries = [], onEntryClick }) => {
     return (
@@ -18,7 +20,8 @@ const TimelineMap = ({ entries = [], onEntryClick }) => {
                 {entries.map((entry, index) => {
                     const isLeft = index % 2 === 0;
                     const sigil = getSigilData(entry.journal_meaning, entry.journal_type);
-                    const hasImageIcon = entry.journal_icon && entry.journal_icon.startsWith('http');
+                    const resolvedIcon = resolveIcon(entry);
+                    const hasImageIcon = resolvedIcon && (typeof resolvedIcon === 'string' && (resolvedIcon.startsWith('http') || resolvedIcon.startsWith('/src') || resolvedIcon.startsWith('/assets')));
 
                     return (
                         <motion.div
@@ -34,7 +37,7 @@ const TimelineMap = ({ entries = [], onEntryClick }) => {
                             {/* The Node (Center Point) - Shows icon thumbnail */}
                             <div className="absolute left-1/2 top-1/2 w-12 h-12 rounded-full border-4 border-[#0a0a0a] bg-slate-800 transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-[0_0_15px_rgba(255,215,0,0.6)] overflow-hidden flex items-center justify-center">
                                 {hasImageIcon ? (
-                                    <img src={entry.journal_icon} alt="" className="w-8 h-8 object-contain" />
+                                    <img src={resolvedIcon} alt="" className="w-8 h-8 object-contain" />
                                 ) : (
                                     <span className="text-xl">{sigil.icon}</span>
                                 )}
@@ -58,7 +61,7 @@ const TimelineMap = ({ entries = [], onEntryClick }) => {
                                     )}>
                                         {hasImageIcon ? (
                                             <img 
-                                                src={entry.journal_icon} 
+                                                src={resolvedIcon} 
                                                 alt={entry.journal_meaning || 'Journal icon'} 
                                                 className="w-10 h-10 object-contain group-hover:scale-110 transition-transform"
                                             />
@@ -112,6 +115,11 @@ const TimelineMap = ({ entries = [], onEntryClick }) => {
             </div>
         </div>
     );
+};
+
+TimelineMap.propTypes = {
+    entries: PropTypes.array,
+    onEntryClick: PropTypes.func,
 };
 
 export default TimelineMap;

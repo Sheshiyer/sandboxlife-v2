@@ -22,9 +22,15 @@ SandboxLife is a D&D-themed reflective journaling application that gamifies self
 - **Messaging**: Direct messages, group chats, and "The Tavern" global chat
 - **Leaderboard**: Compete by level, XP, entries, or streak
 
-### Preview Features
-- **Dashboard v2**: Card-first game mode dashboard (preview)
-- **Set B Collection**: Icon gallery preview for iconsv2 set
+### Game Mode & Dashboard V2 ⚔️
+- **Immersive Hub**: 3D quadrant-based dashboard organizing entries by Mind, Body, Spirit, and Heart
+- **Timeline Map**: Visual journey of your entries as a winding path
+- **The Scribe's Desk**: Themed journaling interface with wax seal animations
+- **Artifacts**: Entries represented as 3D collectible cards
+- **Walkthrough**: See [DASHBOARD_V2_WALKTHROUGH.md](./DASHBOARD_V2_WALKTHROUGH.md) for a complete player's guide.
+
+### Set B Collection
+- **Set B Preview**: Icon gallery preview for iconsv2 set
 
 ## Tech Stack
 
@@ -94,8 +100,9 @@ src/
 
 ## Icon Sets
 
-- **V1 icons**: Stored as signed Supabase URLs in `daily_journal_questions` and `book_journal_questions`.
-- **V2 icons (Set B)**: Local JPG assets in `src/assets/iconsv2` and exported as `iconsv2_questions`.
+- **V1 icons**: Local PNG assets in `src/assets/icons` (Migrated from Supabase URLs to ensure permanent stability).
+- **V2 icons (Set B)**: Local JPG assets in `src/assets/iconsv2`.
+- **Icon Resolver**: A centralized utility (`src/utils/iconResolver.js`) guarantees correct icon display across the app by mapping entry meanings to local assets, fixing broken legacy URLs automatically.
 - **Set B preview**: `SetBCollection` uses `iconsv2_questions` for a preview-only gallery.
 
 ## D&D Progression System
