@@ -1,0 +1,75 @@
+/* Game Theme System */
+:root {
+  /* Colors */
+  --game-void: #0a0a0a;
+  --game-gold: #FFD700;
+  --game-gold-dim: #C6A700;
+  --game-blue: #1E90FF;
+  --game-parchment: #F5E6D3;
+  --game-parchment-dark: #D4C5B0;
+  --game-wood: #3E2723;
+
+  /* Rarities */
+  --rarity-common: #A9A9A9;
+  --rarity-rare: #1E90FF;
+  --rarity-epic: #9932CC;
+  --rarity-legendary: #FFD700;
+
+  /* Quadrant Colors */
+  --quad-mind: #4A90E2;
+  /* Blue / Air */
+  --quad-spirit: #9B59B6;
+  /* Purple / Void */
+  --quad-body: #E74C3C;
+  /* Red / Earth */
+  --quad-heart: #2ECC71;
+  /* Green / Nature */
+
+  /* Shadows */
+  --shadow-float: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --shadow-deep: 0 20px 50px -12px rgba(0, 0, 0, 0.7);
+  --glow-gold: 0 0 15px rgba(255, 215, 0, 0.5);
+
+  /* Fonts (Fallbacks for now) */
+  --font-title: 'Cinzel', serif;
+  --font-body: 'Quicksand', sans-serif;
+}
+
+@keyframes reveal {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-reveal {
+  animation: reveal 0.6s ease-out forwards;
+}
+
+.game-perspective {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Texture Overlays */
+.bg-vignette {
+  background: radial-gradient(circle, transparent 40%, black 120%);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(to bottom, #FFD700, #FDB931);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
