@@ -6,14 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Sandbox Life is a reflective journaling React application using symbolic icon-based prompts to guide users through three journaling practices: daily journals, book journeys, and thought-of-the-day entries.
 
-**D&D-Themed Progression System (v2.0)**
+**Adventure Mode (v2.0) - D&D-Themed Gamification System**
 - **XP System**: 20 XP/entry + streak bonuses (3-day: +5, 7-day: +15). Formula: `100 × level^1.5`
 - **Levels 1-100**: 16 D&D titles from "Wanderer" (Lv1) to "Ascended Author" (Lv100)
 - **34 Icons**: 14 Book + 13 Daily + 7 Thought, across 5 rarity tiers (Common → Legendary)
 - **19 Achievements**: Journal (6), Streak (6), Social (3), Milestone (4) - awards 50-5000 XP
+- **Quest System**: 3 daily + 3 weekly quests with XP rewards (15-150 XP)
+- **Inventory System**: Browse all collectibles (icons, achievements, titles)
 - **Social**: Friends show level & title, "The Tavern" global chat, leaderboards
 - **Automatic**: Database triggers award XP, check unlocks, update streaks on entry insert
-- See `.claude/SYSTEM_DESIGN.md` for complete architecture (22KB)
+- See `.claude/SYSTEM_DESIGN.md` for complete architecture
 
 ## Commands
 
@@ -36,19 +38,19 @@ npm run preview  # Preview production build
 ### Directory Structure
 ```
 src/
-├── pages/           # 20 route components
-├── components/      # 60+ components organized by feature
+├── pages/           # 22 route components (incl. QuestsPage, InventoryPage)
+├── components/      # 70+ components organized by feature
 │   ├── dashboard/   # Classic dashboard cards
-│   ├── game/        # D&D game mode components
+│   ├── game/        # Adventure mode (GameLayout, QuestCard, InventoryItem, ItemDetailModal)
 │   ├── layouts/     # Layout wrappers
 │   ├── navigation/  # Sidebar, nav cards
 │   ├── progression/ # Level/XP display
 │   ├── friends/     # Social components
 │   ├── chat/        # Messaging components
-│   └── ui/          # Base UI (Button, Card, Badge, etc.)
+│   └── ui/          # Base UI (Button, Card, Badge, ActivityPicker, RecentEntriesStrip)
 ├── constants/       # questions.jsx (980 lines of icon themes/questions)
-├── context/         # AccessibilityContext, GameModeContext, DashboardV2Context
-├── utils/           # supabase.jsx, progression.jsx, social.js
+├── context/         # AccessibilityContext, GameModeContext
+├── utils/           # supabase.jsx, progression.jsx, social.js, quests.js, inventory.js
 └── assets/          # Icons (book_journal/, daily_journal/, iconsv2/)
 ```
 
@@ -73,11 +75,13 @@ src/
 **Public**: `/`, `/signup`
 
 **Protected** (all require `:userId`):
-- `/home/:userId` - Home dashboard
+- `/home/:userId` - Home dashboard with mode toggle
 - `/my-book/:userId`, `/my-calendar/:userId` - Entry views
 - `/profile/:userId`, `/settings/:userId` - User pages
 - `/chat/:userId`, `/inbox/:userId`, `/friends/:userId` - Social
-- `/dashboard-v2/:userId` - D&D game mode dashboard
+- `/dashboard-v2/:userId` - Adventure mode dashboard
+- `/quests/:userId` - Quest board (daily + weekly quests)
+- `/inventory/:userId` - Collectibles browser (icons, achievements, titles)
 - `/set-b-collection/:userId` - Icon gallery preview
 
 **Forms** (redirect from nav):
@@ -100,11 +104,19 @@ Colors in `tailwind.config.js`:
 | `icon_unlock_requirements` | 34 icon definitions with unlock_type, unlock_value, rarity |
 | `user_unlocked_icons` | Per-user unlocks with unlock_method |
 | `achievements`, `user_achievements` | 19 achievements with XP rewards |
+| `quest_definitions` | Daily/weekly quest definitions with XP rewards |
+| `user_quest_progress` | Per-user quest completion and claim tracking |
+| `level_titles` | 16 D&D title definitions mapped to levels |
 
 **Database Triggers** (auto-execute on journal entry):
 1. `update_progression_on_entry()` - Awards 20 XP, updates streak, checks unlocks
 2. `award_xp()` RPC - Handles level-up logic and title updates
 3. `check_icon_unlocks()` - Unlocks icons based on level/entries/streak
+4. `check_and_award_achievements()` - Evaluates and awards qualified achievements
+
+**Cron Jobs** (pg_cron):
+- `reset-daily-quests` - Midnight UTC daily
+- `reset-weekly-quests` - Monday midnight UTC
 
 ### Utility Modules
 **`src/utils/supabase.jsx`**: Core database operations
@@ -112,9 +124,17 @@ Colors in `tailwind.config.js`:
 - `fetchDailyEntryCount()` - enforces 5/day limit
 - `fetchAllEntries()`, `fetchWeeklyData()`
 
-**`src/utils/progression.jsx`**: D&D system
+**`src/utils/progression.jsx`**: Adventure mode system
 - `getUserProgression()`, `awardXP()`, `getIconsForJournal()`
 - `getUserAchievements()`, `checkAchievements()`, `getLeaderboard()`
+
+**`src/utils/quests.js`**: Quest system
+- `getQuestsWithProgress()`, `calculateQuestProgress()`, `claimQuestReward()`
+- `getQuestDefinitions()`, `getUserQuestProgress()`, `getQuestTypeStyles()`
+
+**`src/utils/inventory.js`**: Inventory system
+- `getIconInventory()`, `getAchievementInventory()`, `getTitleInventory()`
+- `getInventoryStats()`, `getRarityStyles()`, `formatUnlockRequirement()`
 
 **`src/utils/social.js`**: Social features
 - `getFriends()`, `searchUsers()` - returns users with `level` & `title`

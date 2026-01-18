@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import CalendarDateHeader from '../components/CalendarDateHeader';
 import Menu from '../components/Menu';
 import TopBar from '../components/TopBar';
 import SetBPreviewCard from '../components/SetBPreviewCard';
 import DashboardToggle from "../components/DashboardToggle";
+import RecentEntriesStrip from '../components/ui/RecentEntriesStrip';
 import { fetchTopUserRecords, fetchEntries } from '../utils/supabase';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,7 +15,6 @@ export default function HomePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
   const { isGameMode, disableGameMode } = useGameMode();
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [entries, setEntries] = useState([]);
   const [tod, setTod] = useState({});
@@ -60,16 +59,9 @@ export default function HomePage() {
       });
   }, [userId]);
 
-  const handlePrevClick = () => {
-    setCurrentDate(
-      (prevDate) => new Date(prevDate.setMonth(prevDate.getMonth() - 1))
-    );
-  };
-
-  const handleNextClick = () => {
-    setCurrentDate(
-      (prevDate) => new Date(prevDate.setMonth(prevDate.getMonth() + 1))
-    );
+  const handleEntryClick = (entry) => {
+    // Navigate to calendar page or open modal with entry details
+    console.log('Entry clicked:', entry);
   };
 
   const toggleMenu = () => {
@@ -109,13 +101,13 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Calendar Strip Section */}
+      {/* Recent Entries Strip Section */}
       <section className="bg-lightpapyrus border-b border-darkpapyrus">
         <div className="max-w-7xl mx-auto py-4 px-4 md:px-8">
-          <CalendarDateHeader
-            currentDate={currentDate}
-            onPrevClick={handlePrevClick}
-            onNextClick={handleNextClick}
+          <RecentEntriesStrip 
+            variant="classic"
+            onEntryClick={handleEntryClick}
+            maxEntries={7}
           />
         </div>
       </section>

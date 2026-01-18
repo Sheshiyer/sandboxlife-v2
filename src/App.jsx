@@ -12,6 +12,8 @@ import SettingsPage from "./pages/SettingsPage";
 import ChatRoomPage from "./pages/ChatRoomPage";
 import SetBCollection from "./pages/SetBCollection";
 import DashboardV2 from "./pages/DashboardV2";
+import InventoryPage from "./pages/InventoryPage";
+import QuestsPage from "./pages/QuestsPage";
 import ComponentShowcase from "./pages/ComponentShowcase";
 import ProtectedRoute from "./components/ProtectedRoute";
 import InboxPage from "./pages/InboxPage";
@@ -52,6 +54,8 @@ function App() {
           <Route path="/my-calendar/:userId" element={<ProtectedRoute><MyCalendar /></ProtectedRoute>} />
           <Route path="/set-b-collection/:userId" element={<ProtectedRoute><SetBCollection /></ProtectedRoute>} />
           <Route path="/dashboard-v2/:userId" element={<ProtectedRoute><DashboardV2 /></ProtectedRoute>} />
+          <Route path="/inventory/:userId" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+          <Route path="/quests/:userId" element={<ProtectedRoute><QuestsPage /></ProtectedRoute>} />
           <Route path="/component-showcase/:userId" element={<ProtectedRoute><ComponentShowcase /></ProtectedRoute>} />
           <Route path="/bookjourney" element={<ProtectedRoute><BookJourney /></ProtectedRoute>} />
           <Route path="/dailyjournal" element={<ProtectedRoute><DailyJournal /></ProtectedRoute>} />

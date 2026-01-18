@@ -1,15 +1,31 @@
 import '../../styles/game-theme.css';
 import { motion } from 'framer-motion';
 import { Bars3Icon, ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 const GameLayout = ({ children, mana = 0, toggleMenu, userId }) => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const navItems = [
+        { label: 'QUESTS', path: `/quests/${userId}`, icon: '⚔️', disabled: false },
+        { label: 'INVENTORY', path: `/inventory/${userId}`, icon: '🎒', disabled: false },
+        { label: 'MAP', path: `/map/${userId}`, icon: '🗺️', disabled: true },
+    ];
+
+    const isActive = (path) => location.pathname === path;
 
     const handleClassicView = () => {
         if (userId) {
             navigate(`/home/${userId}`);
+        }
+    };
+
+    const handleNavClick = (item) => {
+        if (!item.disabled && userId) {
+            navigate(item.path);
         }
     };
 
@@ -50,10 +66,27 @@ const GameLayout = ({ children, mana = 0, toggleMenu, userId }) => {
                         <span>Classic View</span>
                     </button>
 
-                    <div className="flex gap-6 text-sm font-semibold tracking-wider text-slate-400">
-                        <span className="hover:text-white cursor-pointer transition-colors">QUESTS</span>
-                        <span className="hover:text-white cursor-pointer transition-colors">INVENTORY</span>
-                        <span className="hover:text-white cursor-pointer transition-colors">MAP</span>
+                    <div className="flex gap-4 text-sm font-semibold tracking-wider">
+                        {navItems.map((item) => (
+                            <button
+                                key={item.label}
+                                onClick={() => handleNavClick(item)}
+                                disabled={item.disabled}
+                                className={clsx(
+                                    "flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all",
+                                    isActive(item.path)
+                                        ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/50"
+                                        : item.disabled
+                                        ? "text-slate-600 cursor-not-allowed"
+                                        : "text-slate-400 hover:text-white hover:bg-white/10"
+                                )}
+                                title={item.disabled ? "Coming Soon" : item.label}
+                            >
+                                <span>{item.icon}</span>
+                                <span>{item.label}</span>
+                                {item.disabled && <span className="text-[0.6rem] text-slate-500 ml-1">(Soon)</span>}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </header>

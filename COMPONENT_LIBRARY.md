@@ -1,8 +1,10 @@
 # Sandbox UI Component Library
 
-A nature-inspired design system for SandboxLife with soft pastels, organic shapes, and beautiful components.
+**Version 2.0 - Adventure Mode Edition**
 
-## 🎨 Design Philosophy
+A nature-inspired design system for SandboxLife with soft pastels, organic shapes, and beautiful components. Version 2.0 adds Adventure Mode game components with a dark fantasy aesthetic.
+
+## Design Philosophy
 
 The Sandbox UI component library follows a **nature-inspired aesthetic** with:
 - **Soft pastel colors** that evoke calm and serenity
@@ -11,9 +13,49 @@ The Sandbox UI component library follows a **nature-inspired aesthetic** with:
 - **Card-first layouts** for content organization
 - **Generous white space** for clarity
 
-## 📚 Component Overview
+**Adventure Mode additions:**
+- **Dark fantasy theme** with deep blacks and gold accents
+- **Rarity-based styling** for collectible items
+- **Progress indicators** for quests and XP
+
+## Component Overview
 
 ### Base UI Components (`src/components/ui/`)
+
+#### ActivityPicker
+Custom month/year picker for filtering journal entries.
+
+```jsx
+import { ActivityPicker } from '../components/ui';
+
+<ActivityPicker
+  selectedMonth={currentMonth}
+  selectedYear={currentYear}
+  onMonthChange={setMonth}
+  onYearChange={setYear}
+/>
+
+// Props
+- selectedMonth: number (0-11)
+- selectedYear: number
+- onMonthChange: function
+- onYearChange: function
+```
+
+#### RecentEntriesStrip
+Horizontal scrollable strip of recent journal entries.
+
+```jsx
+import { RecentEntriesStrip } from '../components/ui';
+
+<RecentEntriesStrip entries={recentEntries} userId={userId} />
+
+// Props
+- entries: array of journal entry objects
+- userId: string
+```
+
+### Base UI Components (continued)
 
 #### Card
 Foundational card component with multiple variants and gradient borders.
@@ -418,11 +460,108 @@ function CustomCard() {
 }
 ```
 
-## 📖 Live Showcase
+### Adventure Mode Components (`src/components/game/`)
+
+#### GameLayout
+Navigation header wrapper for all Adventure Mode pages.
+
+```jsx
+import { GameLayout } from '../components/game';
+
+<GameLayout>
+  <QuestsPage />
+</GameLayout>
+
+// Features:
+- Menu toggle button
+- Game navigation (QUESTS, INVENTORY, MAP)
+- Active state highlighting
+- "Coming Soon" indicators for disabled items
+```
+
+#### QuestCard
+Displays a single quest with progress bar and claim button.
+
+```jsx
+import { QuestCard } from '../components/game';
+
+<QuestCard
+  quest={questData}
+  onClaim={handleClaim}
+  isClaimLoading={loading}
+/>
+
+// Props
+- quest: object with progress, target, isCompleted, isClaimed
+- onClaim: function(questKey)
+- isClaimLoading: boolean
+
+// Visual States:
+- In Progress: Gray progress bar
+- Completed: Green progress bar, active claim button
+- Claimed: Grayed out with "Claimed" badge
+```
+
+#### InventoryItem
+Displays a collectible item card with rarity styling.
+
+```jsx
+import { InventoryItem } from '../components/game';
+
+<InventoryItem
+  item={iconData}
+  type="icon"
+  onClick={handleClick}
+/>
+
+// Props
+- item: object with rarity, isUnlocked, name
+- type: 'icon' | 'achievement' | 'title'
+- onClick: function
+
+// Visual States:
+- Locked: Grayscale, lock icon overlay
+- Unlocked: Full color, rarity glow
+```
+
+#### ItemDetailModal
+Detailed view modal for inventory items.
+
+```jsx
+import { ItemDetailModal } from '../components/game';
+
+<ItemDetailModal
+  item={selectedItem}
+  type="icon"
+  isOpen={modalOpen}
+  onClose={closeModal}
+/>
+
+// Props
+- item: object (icon, achievement, or title data)
+- type: 'icon' | 'achievement' | 'title'
+- isOpen: boolean
+- onClose: function
+```
+
+#### Card3D
+3D floating card for journal entries in quadrant view.
+
+```jsx
+import { Card3D } from '../components/game';
+
+<Card3D entry={journalEntry} onClick={handleClick} />
+
+// Props
+- entry: journal entry object
+- onClick: function
+```
+
+## Live Showcase
 
 Visit `/component-showcase/:userId` to see all components in action with interactive examples.
 
-## 🎯 Best Practices
+## Best Practices
 
 1. **Consistent Spacing**: Use the spacing scale (4, 8, 12, 16, 20, 24, 32, 40, 48px)
 2. **Color Usage**:
@@ -435,7 +574,7 @@ Visit `/component-showcase/:userId` to see all components in action with interac
 5. **Typography**: Use serif fonts for headings, sans-serif for body text
 6. **Component Composition**: Build complex UIs by composing simple components
 
-## 🔧 Customization
+## Customization
 
 ### Extending Colors
 
@@ -465,7 +604,7 @@ const variantClasses = {
 };
 ```
 
-## 📦 Component Import Paths
+## Component Import Paths
 
 ```jsx
 // Base UI
@@ -479,8 +618,11 @@ import { JournalCard, CategoryCard, ActivityCard } from '../components/dashboard
 
 // Layouts
 import { DashboardLayout, GridLayout, SectionContainer } from '../components/layouts';
+
+// Adventure Mode / Game Components
+import { GameLayout, QuestCard, InventoryItem, ItemDetailModal, Card3D } from '../components/game';
 ```
 
 ---
 
-Built with ❤️ for SandboxLife - A nature-inspired journaling experience
+*Built for SandboxLife v2.0 - A nature-inspired journaling experience with Adventure Mode*

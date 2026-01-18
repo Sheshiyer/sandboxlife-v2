@@ -1,6 +1,8 @@
 # SandboxLife Beta
 
-SandboxLife is a reflective journaling application that gamifies self-reflection through an icon unlock progression system and social features. It offers a unique "Adventure Mode" extension that transforms your journey into an immersive fantasy narrative.
+**Version 2.0 - Adventure Mode Edition**
+
+SandboxLife is a reflective journaling application that gamifies self-reflection through a D&D-inspired progression system, quest challenges, and social features. It offers a unique "Adventure Mode" that transforms your journaling journey into an immersive fantasy adventure.
 
 ## Features
 
@@ -10,25 +12,38 @@ SandboxLife is a reflective journaling application that gamifies self-reflection
 - **Thought of the Day**: Brief status updates and reflections
 - **Back-dated Entries**: Entry date picker for calendar views
 
-### Gamification & Progression
+### Adventure Mode Gamification System
 - **XP & Leveling**: Earn 20 XP per entry + streak bonuses. Levels 1-100 with exponential scaling
-- **Level Titles**: From "Wanderer" (Lv1) to "Ascended Author" (Lv100)
+- **16 D&D Titles**: From "Wanderer" (Lv1) to "Ascended Author" (Lv100)
 - **34 Unlockable Icons**: Common → Legendary rarity across 5 tiers
 - **19 Achievements**: Journal, Streak, Social, and Milestone categories (50-5000 XP rewards)
 - **Streak System**: 3-day (+5 XP) and 7-day (+15 XP) streak bonuses
 
-### Social Features
-- **Friends**: Connect with other users
-- **Messaging**: Direct messages, group chats, and global chat
-- **Leaderboard**: Compete by level, XP, entries, or streak
+### Quest System (New in v2.0)
+- **Daily Quests (3)**: Daily Chronicle, Versatile Scribe, Flame Keeper (15-50 XP)
+- **Weekly Quests (3)**: Weekly Chronicler, Icon Explorer, Wordsmith (75-150 XP)
+- **Auto-Reset**: Daily quests reset at midnight UTC, weekly on Monday
+- **Progress Tracking**: Real-time progress calculation from journal entries
 
-### Adventure Mode Extension (Dashboard V2) ⚔️
-*An immersive fantasy skin for your journaling experience.*
-- **Immersive Hub**: 3D quadrant-based dashboard organizing entries by Mind, Body, Spirit, and Heart
-- **Timeline Map**: Visual journey of your entries as a winding path
-- **The Scribe's Desk**: Themed journaling interface with wax seal animations
-- **Artifacts**: Entries represented as 3D collectible cards
-- **Walkthrough**: See [DASHBOARD_V2_WALKTHROUGH.md](./DASHBOARD_V2_WALKTHROUGH.md) for a complete player's guide.
+### Inventory System (New in v2.0)
+- **Icons Browser**: View all 34 icons with unlock status and requirements
+- **Achievements Gallery**: Track progress on 19 achievements across 4 categories
+- **Title Collection**: See all 16 D&D titles with level requirements
+- **Rarity Filtering**: Filter items by Common, Uncommon, Rare, Epic, Legendary
+
+### Social Features
+- **Friends ("Party Members")**: Connect with other users, see their level and title
+- **Messaging**: Direct messages, group chats, and global chat ("The Tavern")
+- **Leaderboard ("Hall of Fame")**: Compete by level, XP, entries, or streak
+
+### Adventure Mode Dashboard (Dashboard V2)
+*An immersive fantasy interface for your journaling experience.*
+- **Dark Fantasy Aesthetic**: Deep black backgrounds with gold accents
+- **Game Navigation**: QUESTS, INVENTORY, MAP menu system
+- **Hero Section**: Prominent level/title display with XP progress bar
+- **Quadrant Board**: 3D cards organizing entries by Mind, Body, Spirit, Heart
+- **Timeline Map**: Visual journey of entries as a winding path (Coming Soon)
+- **Walkthrough**: See [DASHBOARD_V2_WALKTHROUGH.md](./DASHBOARD_V2_WALKTHROUGH.md) for the player's guide
 
 ### Set B Collection
 - **Set B Preview**: Icon gallery preview for iconsv2 set
@@ -73,21 +88,28 @@ The app will be available at `http://localhost:5173`.
 
 ```
 src/
-├── pages/               # 20 route pages
-├── components/          # 60+ components organized by feature
+├── pages/               # 22 route pages
+│   ├── Home.jsx         # Main dashboard with mode toggle
+│   ├── DashboardV2.jsx  # Adventure mode dashboard
+│   ├── QuestsPage.jsx   # Quest board
+│   ├── InventoryPage.jsx # Collectibles browser
+│   └── ...              # Journal, profile, social pages
+├── components/          # 70+ components organized by feature
 │   ├── dashboard/       # Classic dashboard cards
-│   ├── game/            # Adventure mode components
+│   ├── game/            # Adventure mode (GameLayout, QuestCard, InventoryItem)
 │   ├── progression/     # ProgressionCard, LevelUpModal
 │   ├── friends/         # FriendCard, AddFriend, FriendRequests
 │   ├── chat/            # MessageBubble, MessageInput
 │   ├── navigation/      # Sidebar, NavCard
 │   ├── layouts/         # DashboardLayout, GridLayout
-│   └── ui/              # Button, Card, Badge, Avatar
+│   └── ui/              # Button, Card, Badge, Avatar, ActivityPicker
 ├── constants/           # questions.jsx (icon themes & questions)
 ├── context/             # AccessibilityContext, GameModeContext
 ├── utils/
 │   ├── supabase.jsx     # Core DB operations
 │   ├── progression.jsx  # XP, levels, icons, achievements
+│   ├── quests.js        # Quest progress and claims
+│   ├── inventory.js     # Collectibles queries
 │   └── social.js        # Friends, messaging, leaderboard
 └── assets/              # Icons (book_journal/, daily_journal/, iconsv2/)
 ```
@@ -132,17 +154,28 @@ src/
 ### Key Utilities
 ```javascript
 // progression.jsx
-getUserProgression(userId)     // Level, XP, title, streak
+getUserProgression(userId)       // Level, XP, title, streak
 getIconsForJournal(userId, type) // Icons with unlock status
-getUserAchievements(userId)    // Earned achievements
-getLeaderboard(limit, orderBy) // Top users
+getUserAchievements(userId)      // Earned achievements
+getLeaderboard(limit, orderBy)   // Top users
+
+// quests.js
+getQuestsWithProgress(userId)    // All quests with progress
+claimQuestReward(userId, key)    // Claim completed quest
+
+// inventory.js
+getIconInventory(userId)         // All icons with unlock status
+getAchievementInventory(userId)  // All achievements with earned status
+getTitleInventory(userId)        // All titles with level requirements
+getInventoryStats(userId)        // Collection statistics
 
 // social.js
-getFriends(userId)   // Returns friends with level & title
-searchUsers(query)   // Returns users with level & title
+getFriends(userId)               // Returns friends with level & title
+searchUsers(query)               // Returns users with level & title
 ```
 
 See `.claude/SYSTEM_DESIGN.md` for complete system architecture.
+See `docs/DASHBOARD_V2_COMPLETE_GUIDE.md` for full Adventure Mode documentation.
 
 ## Configuration
 

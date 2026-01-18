@@ -420,9 +420,8 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { DatePicker } from "rsuite";
-import "rsuite/dist/rsuite.min.css";
 import { Context } from "../utils/context";
+import ActivityPicker from "./ui/ActivityPicker";
 import { useAccessibility } from "../context/AccessibilityContext";
 import { getPendingRequests, subscribeToFriendRequests } from "../utils/social";
 import sandboxlife from "../assets/sandboxlife.png";
@@ -431,7 +430,7 @@ import { useGameMode } from "../context/GameModeContext";
 
 const TopBar = ({ toggleMenu }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
   const [userId, setUserId] = useState(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [, setContext] = useContext(Context);
@@ -441,12 +440,15 @@ const TopBar = ({ toggleMenu }) => {
   const { fontSize, increaseFontSize, decreaseFontSize, FONT_SIZES } = useAccessibility();
   const { isGameMode } = useGameMode();
 
-  const handleDateChange = (date) => {
-    const formattedDate = new Date(date).toISOString().slice(0, 7); // Format as YYYY-MM
-    setSelectedDate(date);
-    setContext(formattedDate);
-    if (currentPath !== "my-calendar") {
-      navigate(`/my-calendar/${userId}`);
+  const handleActivitySelect = (monthValue) => {
+    setSelectedMonth(monthValue);
+    if (monthValue) {
+      setContext(monthValue);
+      if (currentPath !== "my-calendar") {
+        navigate(`/my-calendar/${userId}`);
+      }
+    } else {
+      setContext(null);
     }
   };
   
@@ -516,43 +518,14 @@ const TopBar = ({ toggleMenu }) => {
             </button>
           </div>
         </div>
-        <div
-          style={{
-            flex: 0.2,
-            textAlign: "center",
-            width: "90%",
-            maxWidth: "360px",
-          }}
-        >
-        <div className="relative max-w-md mx-auto rounded-2xl bg-bgpapyrus border border-darkpapyrus px-3 py-2 shadow-inner">
-          <DatePicker
-            block
-            format="MMMM yyyy"
+        {/* Activity Picker */}
+        <div className="flex-1 max-w-xs mx-4">
+          <ActivityPicker
+            value={selectedMonth}
+            onChange={handleActivitySelect}
             placeholder="Check activity"
-            value={selectedDate}
-            onChange={handleDateChange}
-            oneTap
-            cleanable={false}
-            style={{
-              fontSize: "14px",
-              color: "#2f2f2f",
-              border: "none",
-              cursor: "pointer",
-              backgroundColor: "transparent",
-            }}
-
-            menuStyle={{
-              backgroundColor: "#fafaf0",
-              color: "#3b3b3b",
-              border: "1px solid #e5e5c7",
-              borderRadius: "16px",
-              maxHeight: "240px",
-              overflowY: "auto",
-              scrollbarWidth: "thin",
-            }}
-            placement="bottom"
+            variant={isGameMode ? "game" : "classic"}
           />
-           </div>
         </div>
         <div className="flex items-center gap-2">
           {/* Notifications Bell */}
