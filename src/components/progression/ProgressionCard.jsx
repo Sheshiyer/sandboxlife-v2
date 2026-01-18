@@ -9,6 +9,7 @@ const ProgressionCard = ({ userId, compact = false }) => {
 
   useEffect(() => {
     loadProgression();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const loadProgression = async () => {

@@ -27,6 +27,7 @@ const QuestsPage = () => {
 
   useEffect(() => {
     loadQuests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const loadQuests = async () => {

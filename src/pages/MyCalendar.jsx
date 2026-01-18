@@ -34,11 +34,13 @@ export default function MyCalendar() {
   // Fetch entries for last 3 months on mount
   useEffect(() => {
     fetchEntriesForLastThreeMonths();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   // Update calendar when currentDate changes
   useEffect(() => {
     generateCalendarDays();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate, allEntries]);
 
   // Filter and group entries when selection changes
@@ -49,6 +51,7 @@ export default function MyCalendar() {
       setFilteredEntries(allEntries);
     }
     groupEntriesByMonth(filteredEntries.length ? filteredEntries : allEntries);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, allEntries]);
 
   const fetchEntriesForLastThreeMonths = async () => {

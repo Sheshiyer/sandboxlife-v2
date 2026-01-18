@@ -2,6 +2,8 @@
 
 **Version 2.0 - Adventure Mode Edition**
 
+**Live Preview:** [https://sandboxlife-v2.vercel.app/](https://sandboxlife-v2.vercel.app/)
+
 SandboxLife is a reflective journaling application that gamifies self-reflection through a D&D-inspired progression system, quest challenges, and social features. It offers a unique "Adventure Mode" that transforms your journaling journey into an immersive fantasy adventure.
 
 ## Features
