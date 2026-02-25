@@ -6,6 +6,7 @@ import IconSelectionWindow from '../components/IconSelectionWindow';
 import { daily_journal_questions } from '../constants/questions';
 import { JournalEntrySection } from '../components/JournalEntrySection';
 import { insertJournalEntry } from '../utils/supabase';
+import { buildEntryMetadataSnapshot, getPrimaryTriggerQuestion } from '../utils/journalEntrySemantics';
 import { useNavigate } from 'react-router-dom';
 import { useGameMode } from '../context/GameModeContext';
 import QuestLayout from '../components/game/QuestLayout';
@@ -98,6 +99,14 @@ export default function ThoughtOfTheDay() {
 
   const saveToDb = async () => {
     const createdAt = new Date(`${entryDate}T12:00:00`).toISOString();
+    const entryMetadata = buildEntryMetadataSnapshot(selectedIconTheme, {
+      questionText: getPrimaryTriggerQuestion(selectedIconTheme?.trigger_question),
+      questionUuid: replacePrefixForThoughtOfTheDay(selectedIconTheme?.uuid),
+      metadata: {
+        source: 'thought_of_the_day',
+      },
+    });
+
     const dbOperation = await insertJournalEntry(
       userId,
       'thought_of_the_day',
@@ -106,7 +115,10 @@ export default function ThoughtOfTheDay() {
       selectedIconTheme.meaning,
       journalEntry,
       null,
-      createdAt
+      createdAt,
+      'continue',
+      false,
+      entryMetadata
     );
     if (dbOperation.success) {
       if (isGameMode) {

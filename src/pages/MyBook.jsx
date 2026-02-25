@@ -34,7 +34,7 @@ export default function MyBook() {
 
         const journalMeaning = new Set();
         tempData.forEach((entry) => {
-          journalMeaning.add(entry.journal_meaning);
+          journalMeaning.add(entry.chapter_label || entry.journal_meaning);
         });
         setChapters(Array.from(journalMeaning));
       })
@@ -122,4 +122,3 @@ export default function MyBook() {
     </GamePageLayout>
   );
 }
-

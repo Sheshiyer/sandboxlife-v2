@@ -6,7 +6,8 @@ import IconSelectionWindow from '../components/IconSelectionWindow';
 import { book_journal_questions } from '../constants/questions';
 import { JournalEntrySection } from '../components/JournalEntrySection';
 import { PearlsOfWisdomWindow } from '../components/PearlsOfWisdomWindow';
-import { insertJournalEntry } from '../utils/supabase';
+import { insertJournalEntry, fetchDailyEntryCount } from '../utils/supabase';
+import { buildEntryMetadataSnapshot, getPrimaryTriggerQuestion } from '../utils/journalEntrySemantics';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useGameMode } from '../context/GameModeContext';
@@ -22,11 +23,14 @@ export default function BookJourney() {
   const [selectedIconTheme, setSelectedIconTheme] = useState('');
   const [journalEntry, setJournalEntry] = useState('');
   const [wisdomMessage, setWisdomMessage] = useState('');
+  const [entryStatus, setEntryStatus] = useState('continue');
+  const [primaryToCalendar, setPrimaryToCalendar] = useState(true);
   const [userId, setUserId] = useState(null);
   const [entryDate, setEntryDate] = useState(
     new Date().toISOString().split('T')[0]
   );
-  
+  const [dailyEntryCount, setDailyEntryCount] = useState(0);
+
   function getUserIdFromStorage() {
     const storedUserId = localStorage.getItem('user_id');
     setUserId(storedUserId);
@@ -35,6 +39,16 @@ export default function BookJourney() {
   useEffect(() => {
     getUserIdFromStorage();
   }, []);
+
+  useEffect(() => {
+    const getDailyCount = async () => {
+      if (userId) {
+        const count = await fetchDailyEntryCount(userId);
+        setDailyEntryCount(count);
+      }
+    };
+    getDailyCount();
+  }, [userId]);
 
   const isFirstRender = useRef(true);
   useEffect(() => {
@@ -61,6 +75,16 @@ export default function BookJourney() {
 
   const saveToDb = async () => {
     const createdAt = new Date(`${entryDate}T12:00:00`).toISOString();
+    const selectedQuestion = getPrimaryTriggerQuestion(selectedIconTheme?.trigger_question);
+    const entryMetadata = buildEntryMetadataSnapshot(selectedIconTheme, {
+      questionText: selectedQuestion,
+      metadata: {
+        source: 'book_journey',
+        entry_status: entryStatus,
+        requested_primary_to_calendar: Boolean(primaryToCalendar),
+      },
+    });
+
     const dbOperation = await insertJournalEntry(
       userId,
       selectedIconTheme.journal_type,
@@ -69,7 +93,10 @@ export default function BookJourney() {
       selectedIconTheme.meaning,
       journalEntry,
       wisdomMessage,
-      createdAt
+      createdAt,
+      entryStatus,
+      primaryToCalendar,
+      entryMetadata
     );
     if (dbOperation.success) {
       if (isGameMode) {
@@ -95,6 +122,7 @@ export default function BookJourney() {
             setSelectedIconTheme={setSelectedIconTheme}
             onSave={() => setCurrentStep(2)}
             onCancel={() => {}}
+            dailyEntryCount={dailyEntryCount}
           />
         );
       case 2:
@@ -102,6 +130,7 @@ export default function BookJourney() {
           <JournalEntrySection
             triggerQuestion={selectedIconTheme.trigger_question[0]} 
             triggerIcon={selectedIconTheme.icon}
+            journalType={selectedIconTheme.journal_type}
             chapterEntry="Write your story here"
             onCancel={() => setCurrentStep(1)}
             saveToDb={() => setCurrentStep(3)}
@@ -109,6 +138,10 @@ export default function BookJourney() {
             setJournalEntry={setJournalEntry}
             entryDate={entryDate}
             setEntryDate={setEntryDate}
+            entryStatus={entryStatus}
+            setEntryStatus={setEntryStatus}
+            primaryToCalendar={primaryToCalendar}
+            setPrimaryToCalendar={setPrimaryToCalendar}
           />
         );
       case 3:

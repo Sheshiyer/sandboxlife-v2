@@ -6,6 +6,7 @@ import IconSelectionWindow from '../components/IconSelectionWindow';
 import { daily_journal_questions } from '../constants/questions';
 import { JournalEntrySection } from '../components/JournalEntrySection';
 import { insertJournalEntry , fetchDailyEntryCount} from '../utils/supabase';
+import { buildEntryMetadataSnapshot, getPrimaryTriggerQuestion } from '../utils/journalEntrySemantics';
 import { useNavigate } from 'react-router-dom';
 import { useGameMode } from '../context/GameModeContext';
 import QuestLayout from '../components/game/QuestLayout';
@@ -104,6 +105,13 @@ export default function DailyJournal() {
     }
 
     const createdAt = new Date(`${entryDate}T12:00:00`).toISOString();
+    const entryMetadata = buildEntryMetadataSnapshot(selectedIconTheme, {
+      questionText: getPrimaryTriggerQuestion(selectedIconTheme?.trigger_question),
+      metadata: {
+        source: 'daily_journal',
+      },
+    });
+
     const dbOperation = await insertJournalEntry(
       userId,
       selectedIconTheme.journal_type,
@@ -112,7 +120,10 @@ export default function DailyJournal() {
       selectedIconTheme.meaning,
       journalEntry,
       null,
-      createdAt
+      createdAt,
+      'continue',
+      false,
+      entryMetadata
     );
     if (dbOperation.success) {
       setDailyEntryCount((prev) => prev + 1);

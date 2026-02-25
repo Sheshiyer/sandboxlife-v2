@@ -6,6 +6,58 @@ import {
 import PropTypes from 'prop-types';
 import { useGameMode } from '../context/GameModeContext';
 import { resolveIcon } from '../utils/iconResolver';
+import { ENTRY_STATUS_LABELS, normalizeEntryStatus } from '../utils/journalEntrySemantics';
+
+const CLASSIC_BOOK_STATUS_STYLES = {
+  continue: {
+    bg: '#fdeee4',
+    borderFrom: '#f7c9b2',
+    borderTo: '#de9f87',
+    accent: 'bg-[#f7c9b2]',
+    text: 'text-[#5b2e1f]',
+    titleText: 'text-[#7a2b18]',
+    subText: 'text-[#7a2b18]',
+    footerBg: 'border-[#9B1D1E]/20',
+    icon: 'text-[#9B1D1E]',
+    chip: 'bg-[#f7c9b2] text-[#7a2b18]',
+  },
+  certificate: {
+    bg: '#fde6d4',
+    borderFrom: '#efb38f',
+    borderTo: '#c87d62',
+    accent: 'bg-[#efb38f]',
+    text: 'text-[#5b2e1f]',
+    titleText: 'text-[#7a2b18]',
+    subText: 'text-[#7a2b18]',
+    footerBg: 'border-[#9B1D1E]/20',
+    icon: 'text-[#9B1D1E]',
+    chip: 'bg-[#efb38f] text-[#5b2e1f]',
+  },
+  completed: {
+    bg: '#f5dbdc',
+    borderFrom: '#d89799',
+    borderTo: '#9B1D1E',
+    accent: 'bg-[#d89799]',
+    text: 'text-[#4a1a1b]',
+    titleText: 'text-[#7a1e20]',
+    subText: 'text-[#7a1e20]',
+    footerBg: 'border-[#9B1D1E]/25',
+    icon: 'text-[#9B1D1E]',
+    chip: 'bg-[#9B1D1E] text-[#fdeee4]',
+  },
+  review: {
+    bg: '#fdf4ec',
+    borderFrom: '#e8b99d',
+    borderTo: '#bf7a63',
+    accent: 'bg-[#e8b99d]',
+    text: 'text-[#5b2e1f]',
+    titleText: 'text-[#7a2b18]',
+    subText: 'text-[#7a2b18]',
+    footerBg: 'border-[#9B1D1E]/20',
+    icon: 'text-[#9B1D1E]',
+    chip: 'bg-[#f3d1bd] text-[#7a2b18]',
+  },
+};
 
 const JournalEntry = ({
   title,
@@ -14,9 +66,12 @@ const JournalEntry = ({
   image,
   message,
   time,
-  index
+  index,
+  entryStatus = 'continue',
+  isPrimary = false,
 }) => {
   const { isGameMode } = useGameMode();
+  const normalizedStatus = normalizeEntryStatus(entryStatus);
   
   // Resolve icon using the utility, falling back to passed image prop
   const resolvedImage = resolveIcon({ journal_meaning: iconTitle, journal_icon: image });
@@ -78,17 +133,7 @@ const JournalEntry = ({
 
     switch (title) {
       case "Book":
-        return {
-          bg: "#d4edfc",
-          borderFrom: "#83cefd",
-          borderTo: "#5bb8f2",
-          accent: "bg-[#83cefd]",
-          text: "text-slate-700",
-          titleText: "text-slate-900",
-          subText: "text-slate-700",
-          footerBg: "border-black/10",
-          icon: "text-gray-700"
-        };
+        return CLASSIC_BOOK_STATUS_STYLES[normalizedStatus] || CLASSIC_BOOK_STATUS_STYLES.continue;
       case "Status":
         return {
           bg: "#fef3d4",
@@ -130,10 +175,17 @@ const JournalEntry = ({
 
   const styles = getCardStyles();
   const isFirst = index === 0;
+  const isPrimaryEntry = Boolean(isPrimary);
+  const highlightClass = isPrimaryEntry
+    ? "ring-2 ring-[#9B1D1E] ring-offset-2"
+    : isFirst
+      ? "ring-2 ring-red ring-offset-2"
+      : "";
+  const statusLabel = ENTRY_STATUS_LABELS[normalizedStatus] || ENTRY_STATUS_LABELS.continue;
 
   return (
     <div
-      className={`entry-card transition-all duration-200 ${isFirst ? "ring-2 ring-red ring-offset-2" : ""} cursor-pointer group`}
+      className={`entry-card transition-all duration-200 ${highlightClass} cursor-pointer group`}
       style={{
         "--card-bg": styles.bg,
         "--card-from": styles.borderFrom,
@@ -186,7 +238,14 @@ const JournalEntry = ({
               {title}
             </span>
           </div>
-          <span className={`text-sm ${styles.subText}`}>Tap to view</span>
+          <div className="flex items-center gap-2">
+            {title === "Book" && (
+              <span className={`px-2 py-0.5 rounded-full text-[0.7rem] font-semibold ${styles.chip || "bg-[#f7c9b2] text-[#7a2b18]"}`}>
+                {statusLabel}
+              </span>
+            )}
+            <span className={`text-sm ${styles.subText}`}>Tap to view</span>
+          </div>
         </div>
       </div>
 
@@ -208,7 +267,12 @@ const JournalEntry = ({
       </div>
 
       {/* First Entry Badge */}
-      {isFirst && (
+      {isPrimaryEntry && (
+        <div className="absolute -top-2 -right-2 bg-[#9B1D1E] text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+          Primary
+        </div>
+      )}
+      {!isPrimaryEntry && isFirst && (
         <div className="absolute -top-2 -right-2 bg-red text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
           Latest
         </div>
@@ -228,8 +292,9 @@ JournalEntry.propTypes = {
     image: PropTypes.string,
     message: PropTypes.string,
     time: PropTypes.string,
-    selected: PropTypes.bool,
-    index: PropTypes.number
+    index: PropTypes.number,
+    entryStatus: PropTypes.oneOf(['continue', 'certificate', 'completed', 'review']),
+    isPrimary: PropTypes.bool,
 };
 
 export default JournalEntry;

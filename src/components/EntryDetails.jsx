@@ -12,9 +12,38 @@ import {
   CalendarIcon,
   LightBulbIcon,XMarkIcon
 } from "@heroicons/react/24/outline";
-import { daily_journal_questions } from "../constants/questions";
+import { daily_journal_questions, book_journal_questions, iconsv2_questions } from "../constants/questions";
 import { useGameMode } from "../context/GameModeContext";
 import { resolveIcon } from "../utils/iconResolver";
+import { ENTRY_STATUS_LABELS, normalizeEntryStatus, resolveEntryQuestionText } from "../utils/journalEntrySemantics";
+
+function resolveEntryQuestion(entry, iconTitle) {
+  if (!entry) return "";
+
+  const persistedQuestion = resolveEntryQuestionText(entry);
+  if (persistedQuestion) return persistedQuestion;
+
+  const questionSets = [
+    ...daily_journal_questions,
+    ...book_journal_questions,
+    ...iconsv2_questions,
+  ];
+
+  const byUuid = questionSets.find((item) => item.uuid === entry.journal_id);
+  const byMeaningAndType = questionSets.find(
+    (item) =>
+      item.journal_type === entry.journal_type &&
+      item.meaning === iconTitle
+  );
+  const byMeaningOnly = questionSets.find((item) => item.meaning === iconTitle);
+  const resolved = byUuid || byMeaningAndType || byMeaningOnly;
+
+  if (!resolved) return "";
+  if (Array.isArray(resolved.trigger_question)) {
+    return resolveEntryQuestionText(entry, resolved.trigger_question[0] || "");
+  }
+  return resolveEntryQuestionText(entry, resolved.trigger_question || "");
+}
 
 export default function EntryDetails({
   title,
@@ -134,16 +163,14 @@ export default function EntryDetails({
   const panelStyles = getPanelStyles();
 
   useEffect(() => {
-    if (selected) setOpen(true);
-
-    daily_journal_questions.find((data) => {
-      if (data.meaning === iconTitle && data.trigger_question.length === 4) {
-        // console.log(data.trigger_question.length);
-      } else if (data.trigger_question.length > 4) {
-        setQuestion(data.trigger_question);
-      }
-    });
-  }, [selected,iconTitle]);
+    if (selected) {
+      setOpen(true);
+      setQuestion(resolveEntryQuestion(selected, iconTitle));
+    } else {
+      setOpen(false);
+      setQuestion("");
+    }
+  }, [selected, iconTitle]);
 
 
   return (
@@ -186,7 +213,7 @@ export default function EntryDetails({
                             Quest Inquiry
                           </div>
                           <h2 className={`text-lg md:text-xl font-serif font-semibold leading-snug ${panelStyles.titleText}`}>
-                            {question}
+                            {question || "No prompt found for this entry."}
                           </h2>
                         </div>
                         <div className="space-y-2">
@@ -206,6 +233,22 @@ export default function EntryDetails({
                       </div>
                       <div className={`flex flex-col items-center gap-4 rounded-2xl ${panelStyles.contentBg} px-4 py-4 text-center shadow-inner border ${isGameMode ? "border-white/5" : "border-black/5"}`}>
                         <h3 className={`text-sm font-semibold ${panelStyles.titleText}`}>{iconTitle}</h3>
+                        <div className="flex items-center gap-2">
+                          {selected?.entry_status && (
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                              isGameMode ? "bg-slate-800 text-yellow-400" : "bg-[#f7c9b2] text-[#7a2b18]"
+                            }`}>
+                              {ENTRY_STATUS_LABELS[normalizeEntryStatus(selected.entry_status)] || ENTRY_STATUS_LABELS.continue}
+                            </span>
+                          )}
+                          {selected?.primary_to_calendar && (
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                              isGameMode ? "bg-yellow-500/20 text-yellow-400" : "bg-[#9B1D1E] text-white"
+                            }`}>
+                              Primary
+                            </span>
+                          )}
+                        </div>
                         <div className={`p-1 rounded-2xl ${isGameMode ? "bg-yellow-500/20 shadow-[0_0_15px_rgba(255,215,0,0.1)]" : ""}`}>
                           <img
                             src={resolvedImage ? resolvedImage : defaultImg}
@@ -255,6 +298,6 @@ EntryDetails.propTypes = {
   image: PropTypes.string,
   message: PropTypes.string,
   time: PropTypes.string,
-  selected: PropTypes.bool,
+  selected: PropTypes.object,
   setSelected: PropTypes.func,
 };

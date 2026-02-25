@@ -11,6 +11,7 @@ import { formatJournalType, formatDatetime } from "../utils/formatters";
 import EntryDetails from "../components/EntryDetails";
 import Breadcrumb from "../components/Breadcrumb";
 import { useGameMode } from "../context/GameModeContext";
+import { resolveIcon } from "../utils/iconResolver";
 
 export default function MyCalendar() {
   const { userId } = useParams();
@@ -256,7 +257,10 @@ export default function MyCalendar() {
               {calendarDays.map((dayObj, idx) => {
                 const isSelected = selectedDate === dayObj.date;
                 const hasEntries = dayObj.entries && dayObj.entries.length > 0;
-                const latestEntry = hasEntries ? dayObj.entries[0] : null;
+                const primaryEntry = hasEntries
+                  ? dayObj.entries.find((entry) => entry.primary_to_calendar) || dayObj.entries[0]
+                  : null;
+                const primaryIcon = primaryEntry ? resolveIcon(primaryEntry) : null;
                 
                 return (
                   <button
@@ -282,10 +286,10 @@ export default function MyCalendar() {
                       {dayObj.day}
                     </div>
                     
-                    {latestEntry && latestEntry.journal_icon && (
+                    {primaryEntry && primaryIcon && (
                       <div className="absolute inset-0 p-6 flex items-center justify-center">
                         <img 
-                          src={latestEntry.journal_icon} 
+                          src={primaryIcon} 
                           alt="" 
                           className="w-full h-full object-cover rounded-lg"
                         />
@@ -383,11 +387,13 @@ export default function MyCalendar() {
                                   id={entry.id}
                                   index={idx}
                                   title={formatJournalType(entry.journal_type)}
-                                  iconTitle={entry.journal_meaning}
+                                  iconTitle={entry.chapter_label || entry.journal_meaning}
                                   date={entry.date}
                                   image={entry.journal_icon}
                                   message={entry.journal_entry}
                                   time={entry.time}
+                                  entryStatus={entry.entry_status}
+                                  isPrimary={entry.primary_to_calendar}
                                 />
                               </div>
                             ))}
@@ -407,7 +413,7 @@ export default function MyCalendar() {
         <EntryDetails
           id={selectedEntry.id}
           title={formatJournalType(selectedEntry.journal_type)}
-          iconTitle={selectedEntry.journal_meaning}
+          iconTitle={selectedEntry.chapter_label || selectedEntry.journal_meaning}
           date={selectedEntry.date}
           image={selectedEntry.journal_icon}
           message={selectedEntry.journal_entry}

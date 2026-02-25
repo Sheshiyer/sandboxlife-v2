@@ -63,7 +63,7 @@ const GridList = ({ items, chapters = [] }) => {
         {items
           .filter((item) => {
             if (selectedChapter === "All") return true;
-            return item?.journal_meaning === selectedChapter;
+            return (item?.chapter_label || item?.journal_meaning) === selectedChapter;
           })
           .map((d, index) =>
             d && d.id ? (
@@ -75,12 +75,13 @@ const GridList = ({ items, chapters = [] }) => {
                 <JournalEntry
                   id={d.id}
                   title={formatJournalType(d.journal_type)}
-                  iconTitle={d.journal_meaning}
+                  iconTitle={d.chapter_label || d.journal_meaning}
                   date={formatDatetime(d.created_at).date}
                   image={d.journal_icon}
                   message={d.journal_entry}
                   time={formatDatetime(d.created_at).time}
-                  selected={selected}
+                  entryStatus={d.entry_status}
+                  isPrimary={d.primary_to_calendar}
                   index={index}
                 />
               </div>
@@ -90,7 +91,7 @@ const GridList = ({ items, chapters = [] }) => {
           <EntryDetails
             id={selected.id}
             title={formatJournalType(selected.journal_type)}
-            iconTitle={selected.journal_meaning}
+            iconTitle={selected.chapter_label || selected.journal_meaning}
             date={formatDatetime(selected.created_at).date}
             image={selected.journal_icon}
             message={selected.journal_entry}

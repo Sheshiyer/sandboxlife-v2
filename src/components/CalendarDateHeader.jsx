@@ -33,17 +33,18 @@ const CalendarComponent = () => {
 
   const getIconSource = (entry) => {
     if (!entry) return null;
+    const chapterLabel = entry.chapter_label || entry.journal_meaning;
 
     // Try finding in V1 daily questions
-    let question = daily_journal_questions.find(q => q.meaning === entry.journal_meaning);
+    let question = daily_journal_questions.find(q => q.meaning === chapterLabel);
     if (question && question.icon) return question.icon;
 
     // Try finding in V1 book questions
-    question = book_journal_questions.find(q => q.meaning === entry.journal_meaning);
+    question = book_journal_questions.find(q => q.meaning === chapterLabel);
     if (question && question.icon) return question.icon;
 
     // Try finding in V2 questions
-    question = iconsv2_questions.find(q => q.meaning === entry.journal_meaning);
+    question = iconsv2_questions.find(q => q.meaning === chapterLabel);
     if (question && question.icon) return question.icon;
 
     // Fallback to the stored URL (though this is likely the broken one we're fixing)
@@ -70,7 +71,7 @@ const CalendarComponent = () => {
                 {iconSrc && (
                   <img
                     src={iconSrc}
-                    alt={day.journal_meaning || ""}
+                    alt={day.chapter_label || day.journal_meaning || ""}
                     className={`w-12 h-12 my-auto rounded-xl object-cover bg-white shadow-sm ${
                       index === 4 && "w-12 h-12"
                     }`}

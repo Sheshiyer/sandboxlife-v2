@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { normalizeEntryMetadata, normalizeEntryStatus } from './journalEntrySemantics';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -8,6 +9,22 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
+
+const STATUS_COLUMNS = ['entry_status', 'primary_to_calendar'];
+const METADATA_COLUMNS = [
+  'question_uuid',
+  'question_text',
+  'question_variant',
+  'icon_name',
+  'icon_color',
+  'chapter_label',
+  'metadata',
+];
+
+function isSchemaColumnError(error, columns = []) {
+  const bucket = `${error?.message || ''} ${error?.details || ''} ${error?.hint || ''}`.toLowerCase();
+  return columns.some((columnName) => bucket.includes(String(columnName).toLowerCase()));
+}
 
 /**
  * Get public URL for an icon from Supabase storage
@@ -30,8 +47,13 @@ export async function insertJournalEntry(
   journalEntry,
   wisdomMessage,
   createdAt,
+  entryStatus = 'continue',
+  primaryToCalendar = false,
+  entryMetadata = {},
 ) {
-  const payload = {
+  const normalizedStatus = normalizeEntryStatus(entryStatus);
+  const normalizedMetadata = normalizeEntryMetadata(entryMetadata);
+  const basePayload = {
     user_id: userId,
     journal_type: journalType,
     journal_id: journalId,
@@ -40,16 +62,60 @@ export async function insertJournalEntry(
     journal_entry: journalEntry,
     wisdom_message: wisdomMessage,
   };
+  const statusPayload = {
+    ...basePayload,
+    entry_status: normalizedStatus,
+    primary_to_calendar: Boolean(primaryToCalendar),
+  };
+  const payload = {
+    ...statusPayload,
+    ...normalizedMetadata,
+  };
 
   if (createdAt) {
+    basePayload.created_at = createdAt;
+    statusPayload.created_at = createdAt;
     payload.created_at = createdAt;
   }
 
-  const { data, error } = await supabase.from('user_journal_entries').insert(payload);
+  let { data, error } = await supabase
+    .from('user_journal_entries')
+    .insert(payload)
+    .select('*');
 
+  // Backward compatibility for environments where metadata columns are not yet applied
+  if (error && isSchemaColumnError(error, METADATA_COLUMNS)) {
+    const fallbackResult = await supabase
+      .from('user_journal_entries')
+      .insert(statusPayload)
+      .select('*');
+    data = fallbackResult.data;
+    error = fallbackResult.error;
+  }
+
+  // Backward compatibility for environments where status columns are not yet applied
+  if (error && isSchemaColumnError(error, STATUS_COLUMNS)) {
+    const fallbackResult = await supabase
+      .from('user_journal_entries')
+      .insert(basePayload)
+      .select('*');
+    data = fallbackResult.data;
+    error = fallbackResult.error;
+  }
+
+  if (error) {
+    console.error('Insert error:', error.message, error.details, error.hint);
+    return { success: false, error };
+  }
+  return { success: true, data };
+}
+
+export async function setPrimaryCalendarEntry(entryId) {
+  const { data, error } = await supabase.rpc('set_primary_calendar_entry', { p_entry_id: entryId });
   if (error) {
     return { success: false, error };
   }
+
   return { success: true, data };
 }
 

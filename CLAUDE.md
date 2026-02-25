@@ -4,20 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Sandbox Life is a reflective journaling React application using symbolic icon-based prompts to guide users through three journaling practices: daily journals, book journeys, and thought-of-the-day entries.
+Sandbox Life is a reflective journaling React application that uses symbolic icon-based prompts to guide users through three journaling practices: daily journals, book journeys, and thought-of-the-day entries.
 
-**Adventure Mode (v2.0) - D&D-Themed Gamification System**
-- **XP System**: 20 XP/entry + streak bonuses (3-day: +5, 7-day: +15). Formula: `100 × level^1.5`
-- **Levels 1-100**: 16 D&D titles from "Wanderer" (Lv1) to "Ascended Author" (Lv100)
-- **34 Icons**: 14 Book + 13 Daily + 7 Thought, across 5 rarity tiers (Common → Legendary)
-- **19 Achievements**: Journal (6), Streak (6), Social (3), Milestone (4) - awards 50-5000 XP
-- **Quest System**: 3 daily + 3 weekly quests with XP rewards (15-150 XP)
-- **Inventory System**: Browse all collectibles (icons, achievements, titles)
-- **Social**: Friends show level & title, "The Tavern" global chat, leaderboards
-- **Automatic**: Database triggers award XP, check unlocks, update streaks on entry insert
-- See `.claude/SYSTEM_DESIGN.md` for complete architecture
+**NEW: D&D-Themed Progression System (v2.0)**
+- Icon unlock/progression system with XP, levels 1-100, and 16 D&D-themed titles
+- 34 total icons across journal types (Common → Legendary rarity)
+- 19 achievements (Journal, Streak, Social, Milestone categories)
+- Social features integrated with D&D theming (friends show level & title)
+- Automatic progression tracking via database triggers
+- See `SYSTEM_DESIGN.md` for complete system architecture
 
 ## Commands
+
+All commands are run from the `sandboxlifebeta/` directory:
 
 ```bash
 npm run dev      # Start Vite dev server (localhost:5173)
@@ -30,133 +29,78 @@ npm run preview  # Preview production build
 
 ### Tech Stack
 - **Frontend**: React 18 + Vite + Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Backend**: Supabase (PostgreSQL + Auth)
 - **Routing**: React Router v6 with dynamic `:userId` params
-- **UI Libraries**: Headless UI, Heroicons, RSuite, Framer Motion
-- **State**: React Context API (no Redux)
+- **UI Libraries**: Headless UI, Heroicons, RSuite
 
 ### Directory Structure
 ```
-src/
-├── pages/           # 22 route components (incl. QuestsPage, InventoryPage)
-├── components/      # 70+ components organized by feature
-│   ├── dashboard/   # Classic dashboard cards
-│   ├── game/        # Adventure mode (GameLayout, QuestCard, InventoryItem, ItemDetailModal)
-│   ├── layouts/     # Layout wrappers
-│   ├── navigation/  # Sidebar, nav cards
-│   ├── progression/ # Level/XP display
-│   ├── friends/     # Social components
-│   ├── chat/        # Messaging components
-│   └── ui/          # Base UI (Button, Card, Badge, ActivityPicker, RecentEntriesStrip)
-├── constants/       # questions.jsx (980 lines of icon themes/questions)
-├── context/         # AccessibilityContext, GameModeContext
-├── utils/           # supabase.jsx, progression.jsx, social.js, quests.js, inventory.js
-└── assets/          # Icons (book_journal/, daily_journal/, iconsv2/)
+sandboxlifebeta/src/
+├── pages/           # Route components (11 pages)
+├── components/      # Reusable UI components (14 files)
+├── constants/       # Static data (questions.jsx, formFields.jsx)
+├── utils/           # supabase.jsx (DB ops), helpers.jsx (utilities)
+└── assets/          # Icons organized by journal type
 ```
 
 ### Key Patterns
 
 **Multi-step Form Flow**: Journal pages use `currentStep` state to progress through:
-1. Icon selection (`IconSelectionWindow`) - carousel-based picker
-2. Journal entry (`JournalEntrySection`) - text input
-3. Optional wisdom reflection (`PearlsOfWisdomWindow`) - Book journal only
-4. Save triggers XP award via database trigger, then redirects to home
+1. Icon selection (`IconSelectionWindow`)
+2. Journal entry (`JournalEntrySection`)
+3. Optional wisdom reflection (`PearlsOfWisdomWindow`)
 
-**Context Providers** (wrapped in App.jsx):
-```jsx
-<AccessibilityProvider>     // fontSize, highContrast, reducedMotion (localStorage)
-  <GameModeProvider>        // isGameMode toggle for D&D dashboard
-    <Context.Provider>      // Global state
-```
+**Database Schema** (`user_journal_entries` table):
+- `user_id`, `journal_type`, `journal_id` (uuid), `journal_icon`, `journal_meaning`, `journal_entry`, `wisdom_message`, `created_at`
 
-**Authentication**: Supabase Auth with `userId` stored in localStorage. All protected routes include `:userId` param.
+**Authentication**: Supabase Auth with `user_id` stored in localStorage. Protected routes include userId in URL params.
 
 ### Routes
-**Public**: `/`, `/signup`
-
-**Protected** (all require `:userId`):
-- `/home/:userId` - Home dashboard with mode toggle
-- `/my-book/:userId`, `/my-calendar/:userId` - Entry views
-- `/profile/:userId`, `/settings/:userId` - User pages
-- `/chat/:userId`, `/inbox/:userId`, `/friends/:userId` - Social
-- `/dashboard-v2/:userId` - Adventure mode dashboard
-- `/quests/:userId` - Quest board (daily + weekly quests)
-- `/inventory/:userId` - Collectibles browser (icons, achievements, titles)
-- `/set-b-collection/:userId` - Icon gallery preview
-
-**Forms** (redirect from nav):
-- `/bookjourney`, `/dailyjournal`, `/thoughtoftheday`
+- `/` - Login
+- `/signup` - Signup
+- `/home/:userId` - Home (recent entries + thought of day)
+- `/my-book/:userId` - Book journal entries
+- `/my-calendar/:userId` - Calendar view
+- `/bookjourney`, `/dailyjournal`, `/thoughtoftheday` - Journal entry flows
+- `/profile/:userId`, `/settings/:userId`, `/chat/:userId` - User pages
 
 ### Tailwind Custom Theme
-Colors in `tailwind.config.js`:
-- `bgpapyrus: #f5f5dc`, `lightpapyrus: #fafaf0`, `darkpapyrus: #e5e5c7`
-- `red: #9B1D1E` (accent)
-- `primary.green: #6FCF97`, `accent.orange: #F2994A`
+Custom colors defined in `tailwind.config.js`:
+- `bgpapyrus`: #f5f5dc (main background)
+- `lightpapyrus`: #fafaf0
+- `darkpapyrus`: #e5e5c7
+- `red`: #9B1D1E (accent)
 
-### Database Schema (Key Tables)
-| Table | Purpose |
-|-------|---------|
-| `user_journal_entries` | Journal entries with icon, meaning, wisdom |
-| `user_progression` | Level (1-100), XP, streak_days, longest_streak, title |
-| `user_profiles` | Display name, online status, last_seen_at |
-| `friendships` | Friend relationships (pending/accepted/blocked) |
-| `conversations`, `messages` | Chat system (direct, group, global) |
-| `icon_unlock_requirements` | 34 icon definitions with unlock_type, unlock_value, rarity |
-| `user_unlocked_icons` | Per-user unlocks with unlock_method |
-| `achievements`, `user_achievements` | 19 achievements with XP rewards |
-| `quest_definitions` | Daily/weekly quest definitions with XP rewards |
-| `user_quest_progress` | Per-user quest completion and claim tracking |
-| `level_titles` | 16 D&D title definitions mapped to levels |
+Custom fonts: Graphik (sans), Merriweather (serif)
 
-**Database Triggers** (auto-execute on journal entry):
-1. `update_progression_on_entry()` - Awards 20 XP, updates streak, checks unlocks
-2. `award_xp()` RPC - Handles level-up logic and title updates
-3. `check_icon_unlocks()` - Unlocks icons based on level/entries/streak
-4. `check_and_award_achievements()` - Evaluates and awards qualified achievements
+### Supabase Operations
+All database functions are in `src/utils/supabase.jsx`:
+- `insertJournalEntry()` - Create entry
+- `fetchTopUserRecords()` - Get 6 most recent (excludes thought_of_the_day)
+- `fetchEntries()` - Get entries by type with limit
+- `fetchDailyEntryCount()` - Count today's entries (used for 5/day limit)
+- `fetchAllEntries()` - Get entries in date range
+- `fetchWeeklyData()` - Get last 5 entries chronologically
 
-**Cron Jobs** (pg_cron):
-- `reset-daily-quests` - Midnight UTC daily
-- `reset-weekly-quests` - Monday midnight UTC
+**NEW Progression Functions** (`src/utils/progression.jsx`):
+- `getUserProgression(userId)` - Get level, XP, title, streak
+- `awardXP(userId, amount)` - Award XP (auto-called by trigger)
+- `getIconsForJournal(userId, type)` - Get icons with unlock status
+- `getUserAchievements(userId)` - Get earned achievements
+- `checkAchievements(userId)` - Check and award new achievements
+- `getLeaderboard(limit, orderBy)` - Top users
+- See `SYSTEM_DESIGN.md` for complete API reference
 
-### Utility Modules
-**`src/utils/supabase.jsx`**: Core database operations
-- `insertJournalEntry()`, `fetchTopUserRecords()`, `fetchEntries()`
-- `fetchDailyEntryCount()` - enforces 5/day limit
-- `fetchAllEntries()`, `fetchWeeklyData()`
+**Social Functions Enhanced** (`src/utils/social.js`):
+- `getFriends(userId)` - NOW returns friends with `level` & `title`
+- `searchUsers(query)` - NOW returns users with `level` & `title`
+- All other social functions unchanged (messaging, conversations, etc.)
 
-**`src/utils/progression.jsx`**: Adventure mode system
-- `getUserProgression()`, `awardXP()`, `getIconsForJournal()`
-- `getUserAchievements()`, `checkAchievements()`, `getLeaderboard()`
-
-**`src/utils/quests.js`**: Quest system
-- `getQuestsWithProgress()`, `calculateQuestProgress()`, `claimQuestReward()`
-- `getQuestDefinitions()`, `getUserQuestProgress()`, `getQuestTypeStyles()`
-
-**`src/utils/inventory.js`**: Inventory system
-- `getIconInventory()`, `getAchievementInventory()`, `getTitleInventory()`
-- `getInventoryStats()`, `getRarityStyles()`, `formatUnlockRequirement()`
-
-**`src/utils/social.js`**: Social features
-- `getFriends()`, `searchUsers()` - returns users with `level` & `title`
-- `sendFriendRequest()`, `acceptFriendRequest()`, `blockUser()`
-- `getConversations()`, `sendMessage()`, `getMessages()`
-
-### Icon Sets
-- **V1**: Signed Supabase URLs in `daily_journal_questions`, `book_journal_questions`
-- **V2 (Set B)**: Local JPG assets in `src/assets/iconsv2/` exported as `iconsv2_questions`
-
-## Documentation
-
-**Core Docs** (`.claude/`):
-- `SYSTEM_DESIGN.md` - Complete D&D progression architecture (XP, levels, icons, achievements)
-- `IMPLEMENTATION_COMPLETE.md` - v2.0 feature status
-
-**Steering Guides** (`.claude/steering/`):
-- `icon-management-system.md` - Icon architecture
-- `database-schema-guide.md` - Tables, RLS, queries
-- `component-integration-guide.md` - React component flow
-- `supabase-configuration-guide.md` - Backend setup
-- `icon-update-workflow.md` - Update procedures
+### Journal Question Data
+`src/constants/questions.jsx` contains icon themes with associated questions:
+- **Book Journal**: 18 themes (Shield, Snake, Treasure, etc.) with multiple questions each
+- **Daily Journal**: 24 themes with single or array questions
+- **Thought of the Day**: Single daily reflection
 
 ## Deployment
-Hosted on Vercel with SPA rewrites in `vercel.json`.
+- Hosted on Vercel with SPA rewrites configured in `vercel.json`

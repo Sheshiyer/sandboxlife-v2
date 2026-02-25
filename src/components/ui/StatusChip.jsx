@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { CheckIcon, ClockIcon, StarIcon } from '@heroicons/react/24/solid';
+import { ENTRY_STATUS_LABELS, normalizeEntryStatus } from '../../utils/journalEntrySemantics';
 
 /**
  * StatusChip Component - Status indicator with icon for Continue, Certificate, etc.
@@ -11,28 +12,24 @@ const StatusChip = ({
 }) => {
   const statusConfig = {
     continue: {
-      label: 'Continue',
       icon: ClockIcon,
       bgColor: 'bg-primary-green-light',
       textColor: 'text-primary-green-dark',
       iconColor: 'text-primary-green',
     },
     certificate: {
-      label: 'Certificate',
       icon: StarIcon,
       bgColor: 'bg-accent-orange-light',
       textColor: 'text-accent-orange-dark',
       iconColor: 'text-accent-orange',
     },
     completed: {
-      label: 'Completed',
       icon: CheckIcon,
       bgColor: 'bg-accent-blue-light',
       textColor: 'text-accent-blue-dark',
       iconColor: 'text-accent-blue',
     },
     review: {
-      label: 'Review',
       icon: CheckIcon,
       bgColor: 'bg-accent-teal-pale',
       textColor: 'text-accent-teal-dark',
@@ -46,7 +43,8 @@ const StatusChip = ({
     lg: { chip: 'px-4 py-2 text-base gap-2', icon: 'w-5 h-5' },
   };
 
-  const config = statusConfig[status] || statusConfig.continue;
+  const normalizedStatus = normalizeEntryStatus(status);
+  const config = statusConfig[normalizedStatus] || statusConfig.continue;
   const Icon = config.icon;
   const sizes = sizeClasses[size];
 
@@ -61,7 +59,7 @@ const StatusChip = ({
       `}
     >
       <Icon className={`${sizes.icon} ${config.iconColor}`} />
-      {config.label}
+      {ENTRY_STATUS_LABELS[normalizedStatus] || ENTRY_STATUS_LABELS.continue}
     </span>
   );
 };

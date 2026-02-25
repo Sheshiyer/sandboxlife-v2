@@ -58,14 +58,15 @@ const RecentEntriesStrip = ({
 
   const getIconSource = (entry) => {
     if (!entry) return null;
+    const chapterLabel = entry.chapter_label || entry.journal_meaning;
 
-    let question = daily_journal_questions.find(q => q.meaning === entry.journal_meaning);
+    let question = daily_journal_questions.find(q => q.meaning === chapterLabel);
     if (question?.icon) return question.icon;
 
-    question = book_journal_questions.find(q => q.meaning === entry.journal_meaning);
+    question = book_journal_questions.find(q => q.meaning === chapterLabel);
     if (question?.icon) return question.icon;
 
-    question = iconsv2_questions.find(q => q.meaning === entry.journal_meaning);
+    question = iconsv2_questions.find(q => q.meaning === chapterLabel);
     if (question?.icon) return question.icon;
 
     return entry.journal_icon;
@@ -273,7 +274,7 @@ const RecentEntriesStrip = ({
                   {iconSrc ? (
                     <img
                       src={iconSrc}
-                      alt={entry.journal_meaning || ""}
+                      alt={entry.chapter_label || entry.journal_meaning || ""}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -292,7 +293,7 @@ const RecentEntriesStrip = ({
                 {/* Entry Info */}
                 <div className="text-center">
                   <p className={`text-xs font-semibold truncate ${t.meaningText}`}>
-                    {entry.journal_meaning || 'Entry'}
+                    {entry.chapter_label || entry.journal_meaning || 'Entry'}
                   </p>
                   <p className={`text-[0.6rem] uppercase tracking-wide ${t.typeText}`}>
                     {formatJournalType(entry.journal_type)}

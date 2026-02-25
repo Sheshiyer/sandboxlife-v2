@@ -12,6 +12,10 @@ export const JournalEntrySection = ({
   isLimitReached,
   entryDate,
   setEntryDate,
+  entryStatus = 'continue',
+  setEntryStatus = null,
+  primaryToCalendar = false,
+  setPrimaryToCalendar = null,
 }) => {
   const { isGameMode } = useGameMode();
   
@@ -112,6 +116,50 @@ export const JournalEntrySection = ({
             />
           </div>
 
+          {journalType === 'book_journal' && (
+            <div className={`mb-6 space-y-3 rounded-lg px-4 py-3 border ${
+              isGameMode ? 'bg-slate-700/50 border-slate-800' : 'bg-lightpapyrus border-darkpapyrus/50'
+            }`}>
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="entry-status"
+                  className={`text-sm font-semibold ${isGameMode ? 'text-yellow-400' : 'text-[#9B1D1E]'}`}
+                >
+                  Entry status
+                </label>
+                <select
+                  id="entry-status"
+                  value={entryStatus}
+                  onChange={(event) => setEntryStatus?.(event.target.value)}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium border-2 transition-all ${
+                    isGameMode
+                      ? 'bg-slate-800 border-slate-900 text-slate-300 focus:border-yellow-500'
+                      : 'bg-white border-darkpapyrus text-gray-800 focus:border-[#9B1D1E]'
+                  } focus:outline-none focus:ring-2 ${
+                    isGameMode ? 'focus:ring-yellow-500/30' : 'focus:ring-red-900/30'
+                  }`}
+                >
+                  <option value="continue">Continue</option>
+                  <option value="certificate">Certificate</option>
+                  <option value="completed">Completed</option>
+                  <option value="review">Review</option>
+                </select>
+              </div>
+
+              <label className={`flex items-center gap-2 text-sm font-medium ${
+                isGameMode ? 'text-slate-300' : 'text-[#7A2B18]'
+              }`}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(primaryToCalendar)}
+                  onChange={(event) => setPrimaryToCalendar?.(event.target.checked)}
+                  className={isGameMode ? 'accent-yellow-500' : 'accent-[#9B1D1E]'}
+                />
+                Mark as primary entry for this date on calendar
+              </label>
+            </div>
+          )}
+
           {/* Textarea */}
           <textarea
             className={`w-full p-4 rounded-xl resize-none transition-all border-2 ${
@@ -195,4 +243,8 @@ JournalEntrySection.propTypes = {
     isLimitReached: PropTypes.bool,
     entryDate: PropTypes.string.isRequired,
     setEntryDate: PropTypes.func.isRequired,
+    entryStatus: PropTypes.oneOf(['continue', 'certificate', 'completed', 'review']),
+    setEntryStatus: PropTypes.func,
+    primaryToCalendar: PropTypes.bool,
+    setPrimaryToCalendar: PropTypes.func,
 };
