@@ -29,14 +29,18 @@ function resolveEntryQuestion(entry, iconTitle) {
     ...iconsv2_questions,
   ];
 
-  const byUuid = questionSets.find((item) => item.uuid === entry.journal_id);
-  const byMeaningAndType = questionSets.find(
+  const matchingTypeSet = entry.journal_type
+    ? questionSets.filter((item) => item.journal_type === entry.journal_type)
+    : questionSets;
+
+  const byUuidInType = matchingTypeSet.find((item) => item.uuid === entry.journal_id);
+  const byUuidGlobal = questionSets.find((item) => item.uuid === entry.journal_id);
+  const byMeaningAndType = matchingTypeSet.find(
     (item) =>
-      item.journal_type === entry.journal_type &&
       item.meaning === iconTitle
   );
-  const byMeaningOnly = questionSets.find((item) => item.meaning === iconTitle);
-  const resolved = byUuid || byMeaningAndType || byMeaningOnly;
+  const byMeaningGlobal = questionSets.find((item) => item.meaning === iconTitle);
+  const resolved = byUuidInType || byUuidGlobal || byMeaningAndType || byMeaningGlobal;
 
   if (!resolved) return "";
   if (Array.isArray(resolved.trigger_question)) {

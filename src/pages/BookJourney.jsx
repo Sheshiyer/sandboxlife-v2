@@ -43,12 +43,12 @@ export default function BookJourney() {
   useEffect(() => {
     const getDailyCount = async () => {
       if (userId) {
-        const count = await fetchDailyEntryCount(userId);
+        const count = await fetchDailyEntryCount(userId, entryDate);
         setDailyEntryCount(count);
       }
     };
     getDailyCount();
-  }, [userId]);
+  }, [userId, entryDate]);
 
   const isFirstRender = useRef(true);
   useEffect(() => {
@@ -74,6 +74,12 @@ export default function BookJourney() {
   };
 
   const saveToDb = async () => {
+    const currentCount = await fetchDailyEntryCount(userId, entryDate);
+    if (currentCount >= 5) {
+      toast.error('You have reached the maximum of 5 entries for this date!');
+      return;
+    }
+
     const createdAt = new Date(`${entryDate}T12:00:00`).toISOString();
     const selectedQuestion = getPrimaryTriggerQuestion(selectedIconTheme?.trigger_question);
     const entryMetadata = buildEntryMetadataSnapshot(selectedIconTheme, {
@@ -128,7 +134,7 @@ export default function BookJourney() {
       case 2:
         return (
           <JournalEntrySection
-            triggerQuestion={selectedIconTheme.trigger_question[0]} 
+            triggerQuestion={getPrimaryTriggerQuestion(selectedIconTheme?.trigger_question) || selectedIconTheme?.trigger_question}
             triggerIcon={selectedIconTheme.icon}
             journalType={selectedIconTheme.journal_type}
             chapterEntry="Write your story here"
