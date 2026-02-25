@@ -61,7 +61,7 @@ const DashboardV2 = () => {
         type: entry.journal_type,
         rarity: entry.journal_meaning ? 'legendary' : 'common',
         quadrant: displayData.quadrant,
-        icon: entry.journal_icon, // Use actual icon URL from database
+        icon: displayData.icon, // Use resolved icon to avoid broken/expired storage URLs
         scheme: displayData.scheme
       };
     });
