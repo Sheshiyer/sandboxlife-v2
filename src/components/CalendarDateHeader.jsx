@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchWeeklyData } from "../utils/supabase";
 import { formatDatetime } from "../utils/formatters";
-import { 
-  book_journal_questions, 
-  daily_journal_questions, 
-  iconsv2_questions 
-} from "../constants/questions";
+import { resolveIcon } from "../utils/iconResolver";
 
 const CalendarComponent = () => {
   const [weeklyData, setweeklyData] = useState([]);
@@ -31,26 +27,6 @@ const CalendarComponent = () => {
     fetchData();
   }, []);
 
-  const getIconSource = (entry) => {
-    if (!entry) return null;
-    const chapterLabel = entry.chapter_label || entry.journal_meaning;
-
-    // Try finding in V1 daily questions
-    let question = daily_journal_questions.find(q => q.meaning === chapterLabel);
-    if (question && question.icon) return question.icon;
-
-    // Try finding in V1 book questions
-    question = book_journal_questions.find(q => q.meaning === chapterLabel);
-    if (question && question.icon) return question.icon;
-
-    // Try finding in V2 questions
-    question = iconsv2_questions.find(q => q.meaning === chapterLabel);
-    if (question && question.icon) return question.icon;
-
-    // Fallback to the stored URL (though this is likely the broken one we're fixing)
-    return entry.journal_icon;
-  };
-
   return (
     <div
       className="sticky right-0 z-10 w-full"
@@ -59,7 +35,7 @@ const CalendarComponent = () => {
       <div className="flex items-center h-auto gap-2 px-3 py-3 text-xs justify-evenly bg-lightpapyrus border border-darkpapyrus rounded-2xl shadow-sm">
       {weeklyData &&
         weeklyData?.sort()?.map((day, index) => {
-          const iconSrc = getIconSource(day);
+          const iconSrc = resolveIcon(day);
           return (
             <div key={index} className="w-16 h-20 m-auto">
               <div

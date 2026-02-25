@@ -3,6 +3,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import PropTypes from 'prop-types';
+import { isRenderableImageSource } from '../../utils/iconResolver';
 
 const Card3D = ({
     title,
@@ -53,19 +54,6 @@ const Card3D = ({
         }
     };
 
-    const isRenderableImageIcon = (iconValue) => {
-        if (typeof iconValue !== 'string') return false;
-        const normalized = iconValue.trim().toLowerCase();
-        return (
-            normalized.startsWith('http://') ||
-            normalized.startsWith('https://') ||
-            normalized.startsWith('/assets/') ||
-            normalized.startsWith('assets/') ||
-            normalized.startsWith('/src/') ||
-            normalized.startsWith('data:image/')
-        );
-    };
-
     return (
         <div className="game-perspective w-full h-[320px] cursor-pointer" onClick={() => { setIsFlipped(!isFlipped); onClick && onClick(); }}>
             <motion.div
@@ -101,7 +89,7 @@ const Card3D = ({
                         scheme?.bg ? scheme.bg + "/50" : "bg-slate-800",
                         scheme?.border ? scheme.border + "/30" : "border-slate-700/50"
                     )}>
-                        {isRenderableImageIcon(icon) ? (
+                        {isRenderableImageSource(icon) ? (
                             <img 
                                 src={icon} 
                                 alt={title || 'Journal icon'} 

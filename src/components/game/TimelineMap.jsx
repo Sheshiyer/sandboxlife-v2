@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { getSigilData } from '../../utils/sigilSystem';
 import PropTypes from 'prop-types';
-import { resolveIcon } from '../../utils/iconResolver';
+import { resolveIcon, isRenderableImageSource } from '../../utils/iconResolver';
 
 const TimelineMap = ({ entries = [], onEntryClick }) => {
     return (
@@ -21,7 +21,7 @@ const TimelineMap = ({ entries = [], onEntryClick }) => {
                     const isLeft = index % 2 === 0;
                     const sigil = getSigilData(entry.journal_meaning, entry.journal_type);
                     const resolvedIcon = resolveIcon(entry);
-                    const hasImageIcon = resolvedIcon && (typeof resolvedIcon === 'string' && (resolvedIcon.startsWith('http') || resolvedIcon.startsWith('/src') || resolvedIcon.startsWith('/assets')));
+                    const hasImageIcon = isRenderableImageSource(resolvedIcon);
 
                     return (
                         <motion.div

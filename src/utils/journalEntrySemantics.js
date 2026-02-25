@@ -5,6 +5,13 @@ export const ENTRY_STATUS_LABELS = Object.freeze({
   review: 'Review',
 });
 
+export const CLASSIC_BOOK_STATUS_CHIP_CLASSES = Object.freeze({
+  continue: 'bg-[#f7c9b2] text-[#7a2b18]',
+  certificate: 'bg-[#efb38f] text-[#5b2e1f]',
+  completed: 'bg-[#9B1D1E] text-[#fdeee4]',
+  review: 'bg-[#f3d1bd] text-[#7a2b18]',
+});
+
 export const VALID_ENTRY_STATUSES = new Set(Object.keys(ENTRY_STATUS_LABELS));
 
 function normalizeText(value) {
@@ -81,4 +88,9 @@ export function resolveEntryQuestionText(entry, fallbackQuestion = '') {
 
   const fallback = normalizeText(fallbackQuestion);
   return fallback || '';
+}
+
+export function getClassicBookStatusChipClass(entryStatus) {
+  const normalized = normalizeEntryStatus(entryStatus);
+  return CLASSIC_BOOK_STATUS_CHIP_CLASSES[normalized] || CLASSIC_BOOK_STATUS_CHIP_CLASSES.continue;
 }

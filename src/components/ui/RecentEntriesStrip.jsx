@@ -11,11 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { fetchWeeklyData } from "../../utils/supabase";
 import { formatDatetime, formatJournalType } from "../../utils/formatters";
-import { 
-  book_journal_questions, 
-  daily_journal_questions, 
-  iconsv2_questions 
-} from "../../constants/questions";
+import { resolveIcon } from "../../utils/iconResolver";
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -55,22 +51,6 @@ const RecentEntriesStrip = ({
     };
     fetchData();
   }, [maxEntries]);
-
-  const getIconSource = (entry) => {
-    if (!entry) return null;
-    const chapterLabel = entry.chapter_label || entry.journal_meaning;
-
-    let question = daily_journal_questions.find(q => q.meaning === chapterLabel);
-    if (question?.icon) return question.icon;
-
-    question = book_journal_questions.find(q => q.meaning === chapterLabel);
-    if (question?.icon) return question.icon;
-
-    question = iconsv2_questions.find(q => q.meaning === chapterLabel);
-    if (question?.icon) return question.icon;
-
-    return entry.journal_icon;
-  };
 
   const getJournalIcon = (journalType) => {
     switch (journalType) {
@@ -232,7 +212,7 @@ const RecentEntriesStrip = ({
           </div>
         ) : (
           entries.map((entry, index) => {
-            const iconSrc = getIconSource(entry);
+              const iconSrc = resolveIcon(entry);
             const JournalIcon = getJournalIcon(entry.journal_type);
             const dayInfo = getDayInfo(entry.created_at);
             const isLatest = index === 0;

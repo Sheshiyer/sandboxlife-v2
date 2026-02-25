@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildEntryMetadataSnapshot,
+  getClassicBookStatusChipClass,
   getPrimaryTriggerQuestion,
   normalizeEntryMetadata,
   normalizeEntryStatus,
@@ -71,5 +72,11 @@ describe('journalEntrySemantics', () => {
     expect(resolveEntryQuestionText({ question_text: 'Stored question' }, 'Fallback')).toBe('Stored question');
     expect(resolveEntryQuestionText({}, 'Fallback')).toBe('Fallback');
     expect(resolveEntryQuestionText({}, '')).toBe('');
+  });
+
+  it('returns consistent classic chip class for book statuses', () => {
+    expect(getClassicBookStatusChipClass('completed')).toBe('bg-[#9B1D1E] text-[#fdeee4]');
+    expect(getClassicBookStatusChipClass(' REVIEW ')).toBe('bg-[#f3d1bd] text-[#7a2b18]');
+    expect(getClassicBookStatusChipClass('unknown')).toBe('bg-[#f7c9b2] text-[#7a2b18]');
   });
 });

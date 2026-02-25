@@ -29,3 +29,16 @@ export const resolveIcon = (entry) => {
   // Return the local asset if found, otherwise fallback to the stored icon URL
   return match ? match.icon : entry.journal_icon;
 };
+
+export const isRenderableImageSource = (iconValue) => {
+  if (typeof iconValue !== 'string') return false;
+  const normalized = iconValue.trim().toLowerCase();
+  return (
+    normalized.startsWith('http://') ||
+    normalized.startsWith('https://') ||
+    normalized.startsWith('/assets/') ||
+    normalized.startsWith('assets/') ||
+    normalized.startsWith('/src/') ||
+    normalized.startsWith('data:image/')
+  );
+};

@@ -15,7 +15,7 @@ import {
 import { daily_journal_questions, book_journal_questions, iconsv2_questions } from "../constants/questions";
 import { useGameMode } from "../context/GameModeContext";
 import { resolveIcon } from "../utils/iconResolver";
-import { ENTRY_STATUS_LABELS, normalizeEntryStatus, resolveEntryQuestionText } from "../utils/journalEntrySemantics";
+import { ENTRY_STATUS_LABELS, normalizeEntryStatus, resolveEntryQuestionText, getClassicBookStatusChipClass } from "../utils/journalEntrySemantics";
 
 function resolveEntryQuestion(entry, iconTitle) {
   if (!entry) return "";
@@ -165,6 +165,10 @@ export default function EntryDetails({
   };
 
   const panelStyles = getPanelStyles();
+  const normalizedStatus = normalizeEntryStatus(selected?.entry_status);
+  const statusChipClass = isGameMode
+    ? "bg-slate-800 text-yellow-400"
+    : getClassicBookStatusChipClass(normalizedStatus);
 
   useEffect(() => {
     if (selected) {
@@ -240,9 +244,9 @@ export default function EntryDetails({
                         <div className="flex items-center gap-2">
                           {selected?.entry_status && (
                             <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                              isGameMode ? "bg-slate-800 text-yellow-400" : "bg-[#f7c9b2] text-[#7a2b18]"
+                              statusChipClass
                             }`}>
-                              {ENTRY_STATUS_LABELS[normalizeEntryStatus(selected.entry_status)] || ENTRY_STATUS_LABELS.continue}
+                              {ENTRY_STATUS_LABELS[normalizedStatus] || ENTRY_STATUS_LABELS.continue}
                             </span>
                           )}
                           {selected?.primary_to_calendar && (

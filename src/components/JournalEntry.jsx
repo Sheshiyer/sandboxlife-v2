@@ -6,7 +6,7 @@ import {
 import PropTypes from 'prop-types';
 import { useGameMode } from '../context/GameModeContext';
 import { resolveIcon } from '../utils/iconResolver';
-import { ENTRY_STATUS_LABELS, normalizeEntryStatus } from '../utils/journalEntrySemantics';
+import { ENTRY_STATUS_LABELS, normalizeEntryStatus, getClassicBookStatusChipClass } from '../utils/journalEntrySemantics';
 
 const CLASSIC_BOOK_STATUS_STYLES = {
   continue: {
@@ -182,6 +182,9 @@ const JournalEntry = ({
       ? "ring-2 ring-red ring-offset-2"
       : "";
   const statusLabel = ENTRY_STATUS_LABELS[normalizedStatus] || ENTRY_STATUS_LABELS.continue;
+  const statusChipClass = isGameMode
+    ? "bg-slate-800 text-yellow-400"
+    : getClassicBookStatusChipClass(normalizedStatus);
 
   return (
     <div
@@ -240,7 +243,7 @@ const JournalEntry = ({
           </div>
           <div className="flex items-center gap-2">
             {title === "Book" && (
-              <span className={`px-2 py-0.5 rounded-full text-[0.7rem] font-semibold ${styles.chip || "bg-[#f7c9b2] text-[#7a2b18]"}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[0.7rem] font-semibold ${statusChipClass}`}>
                 {statusLabel}
               </span>
             )}
