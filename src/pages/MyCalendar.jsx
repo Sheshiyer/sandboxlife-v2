@@ -25,7 +25,6 @@ export default function MyCalendar() {
   
   // Entries state
   const [allEntries, setAllEntries] = useState([]);
-  const [filteredEntries, setFilteredEntries] = useState([]);
   const [groupedEntries, setGroupedEntries] = useState({});
   const [expandedMonths, setExpandedMonths] = useState({});
   
@@ -47,11 +46,11 @@ export default function MyCalendar() {
   // Filter and group entries when selection changes
   useEffect(() => {
     if (selectedDate) {
-      filterEntriesByDate(selectedDate);
+      const filtered = filterEntriesByDate(selectedDate);
+      groupEntriesByMonth(filtered);
     } else {
-      setFilteredEntries(allEntries);
+      groupEntriesByMonth(allEntries);
     }
-    groupEntriesByMonth(filteredEntries.length ? filteredEntries : allEntries);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, allEntries]);
 
@@ -71,7 +70,6 @@ export default function MyCalendar() {
       })).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       
       setAllEntries(formattedEntries);
-      setFilteredEntries(formattedEntries);
       
       // Auto-expand last 3 months
       const months = {};
@@ -106,12 +104,7 @@ export default function MyCalendar() {
     // Add days of month with their entries
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const dayEntries = allEntries.filter(entry => {
-        const entryDate = new Date(entry.created_at);
-        return entryDate.getFullYear() === year && 
-               entryDate.getMonth() === month && 
-               entryDate.getDate() === day;
-      });
+      const dayEntries = allEntries.filter((entry) => toLocalDateKey(entry.created_at) === dateStr);
       
       days.push({ day, date: dateStr, entries: dayEntries });
     }
@@ -120,11 +113,10 @@ export default function MyCalendar() {
   };
 
   const filterEntriesByDate = (dateStr) => {
-    const filtered = allEntries.filter(entry => {
-      const entryDate = new Date(entry.created_at).toISOString().split('T')[0];
+    return allEntries.filter(entry => {
+      const entryDate = toLocalDateKey(entry.created_at);
       return entryDate === dateStr;
     });
-    setFilteredEntries(filtered);
   };
 
   const groupEntriesByMonth = (entries) => {
@@ -178,6 +170,13 @@ export default function MyCalendar() {
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const toLocalDateKey = (dateValue) => {
+    const date = new Date(dateValue);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   return (
     <div className={isGameMode ? "min-h-screen bg-slate-900" : "min-h-screen bg-bgpapyrus"}>
@@ -263,6 +262,7 @@ export default function MyCalendar() {
                   ? dayObj.entries.find((entry) => entry.primary_to_calendar) || dayObj.entries[0]
                   : null;
                 const primaryIcon = primaryEntry ? resolveIcon(primaryEntry) : null;
+                const hasPrimarySelection = Boolean(primaryEntry?.primary_to_calendar);
                 
                 return (
                   <button
@@ -279,7 +279,11 @@ export default function MyCalendar() {
                           : (isGameMode ? 'bg-slate-900 hover:bg-slate-800' : 'bg-bgpapyrus hover:bg-darkpapyrus')
                       }
                       ${hasEntries ? 'border-2' : 'border'}
-                      ${isGameMode ? 'border-slate-600' : 'border-darkpapyrus'}
+                      ${hasEntries
+                        ? (isGameMode
+                          ? (hasPrimarySelection ? 'border-yellow-400' : 'border-slate-500')
+                          : (hasPrimarySelection ? 'border-[#9B1D1E]' : 'border-darkpapyrus'))
+                        : (isGameMode ? 'border-slate-600' : 'border-darkpapyrus')}
                     `}
                   >
                     <div className="absolute top-1 left-2 text-xs font-semibold" style={{
@@ -293,7 +297,11 @@ export default function MyCalendar() {
                         <img 
                           src={primaryIcon} 
                           alt="" 
-                          className="w-full h-full object-cover rounded-lg"
+                          className={`w-full h-full object-cover rounded-lg ${
+                            hasPrimarySelection
+                              ? (isGameMode ? 'ring-2 ring-yellow-300' : 'ring-2 ring-[#9B1D1E]')
+                              : ''
+                          }`}
                         />
                       </div>
                     )}
