@@ -58,8 +58,10 @@ export default function MyCalendar() {
   const fetchEntriesForLastThreeMonths = async () => {
     try {
       const endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 3);
+      startDate.setHours(0, 0, 0, 0);
 
       const entries = await fetchAllEntries(userId, startDate.toISOString(), endDate.toISOString());
       
