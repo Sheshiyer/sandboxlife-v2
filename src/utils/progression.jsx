@@ -399,16 +399,10 @@ export async function getLeaderboard(limit = 10, orderBy = 'level') {
     const validOrderOptions = ['level', 'xp', 'total_entries', 'longest_streak'];
     const orderColumn = validOrderOptions.includes(orderBy) ? orderBy : 'level';
 
-    const { data, error } = await supabase
-      .from('user_progression')
-      .select(
-        `
-        *,
-        user_profiles!inner(display_name, avatar_url)
-      `
-      )
-      .order(orderColumn, { ascending: false })
-      .limit(limit);
+    const { data, error } = await supabase.rpc('get_social_leaderboard', {
+      p_limit: limit,
+      p_order_by: orderColumn,
+    });
 
     if (error) {
       return { success: false, error };

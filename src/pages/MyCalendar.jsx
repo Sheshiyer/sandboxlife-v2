@@ -31,11 +31,48 @@ export default function MyCalendar() {
   // Modal state
   const [selectedEntry, setSelectedEntry] = useState(null);
 
-  // Fetch entries for last 3 months on mount
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  // Keep recent entries available, and include whichever month is being viewed.
   useEffect(() => {
-    fetchEntriesForLastThreeMonths();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+    let cancelled = false;
+    const fetchCalendarEntries = async () => {
+      try {
+        const today = new Date();
+        const recentStart = new Date(today.getFullYear(), today.getMonth() - 3, 1);
+        const monthStart = new Date(currentYear, currentMonth, 1);
+        const monthEnd = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
+        const todayEnd = new Date(today);
+        todayEnd.setHours(23, 59, 59, 999);
+        const startDate = monthStart < recentStart ? monthStart : recentStart;
+        const endDate = monthEnd > todayEnd ? monthEnd : todayEnd;
+        const entries = await fetchAllEntries(userId, startDate.toISOString(), endDate.toISOString());
+        if (cancelled) return;
+        if (!Array.isArray(entries)) throw new Error('Invalid calendar entries response');
+
+        const formattedEntries = entries.map(entry => ({
+          ...entry,
+          ...formatDatetime(entry.created_at)
+        })).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        setAllEntries(formattedEntries);
+        setExpandedMonths(previous => {
+          const months = { ...previous };
+          for (let i = 0; i < 3; i++) {
+            const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            months[`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`] = true;
+          }
+          months[`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`] = true;
+          return months;
+        });
+      } catch (error) {
+        if (!cancelled) toast.error("Failed to load entries");
+      }
+    };
+
+    fetchCalendarEntries();
+    return () => { cancelled = true; };
+  }, [userId, currentYear, currentMonth]);
 
   // Update calendar when currentDate changes
   useEffect(() => {
@@ -53,37 +90,6 @@ export default function MyCalendar() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, allEntries]);
-
-  const fetchEntriesForLastThreeMonths = async () => {
-    try {
-      const endDate = new Date();
-      endDate.setHours(23, 59, 59, 999);
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 3);
-      startDate.setHours(0, 0, 0, 0);
-
-      const entries = await fetchAllEntries(userId, startDate.toISOString(), endDate.toISOString());
-      
-      const formattedEntries = entries.map(entry => ({
-        ...entry,
-        ...formatDatetime(entry.created_at)
-      })).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      
-      setAllEntries(formattedEntries);
-      
-      // Auto-expand last 3 months
-      const months = {};
-      for (let i = 0; i < 3; i++) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        months[key] = true;
-      }
-      setExpandedMonths(months);
-    } catch (error) {
-      toast.error("Failed to load entries");
-    }
-  };
 
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
@@ -140,16 +146,20 @@ export default function MyCalendar() {
   };
 
   const handlePrevMonth = () => {
+    setSelectedDate(null);
     setCurrentDate(prev => {
       const newDate = new Date(prev);
+      newDate.setDate(1);
       newDate.setMonth(newDate.getMonth() - 1);
       return newDate;
     });
   };
 
   const handleNextMonth = () => {
+    setSelectedDate(null);
     setCurrentDate(prev => {
       const newDate = new Date(prev);
+      newDate.setDate(1);
       newDate.setMonth(newDate.getMonth() + 1);
       return newDate;
     });
@@ -161,6 +171,18 @@ export default function MyCalendar() {
     } else {
       setSelectedDate(dateStr);
     }
+  };
+
+  const handlePrimarySelected = (primaryEntry) => {
+    const primaryDay = new Date(primaryEntry.created_at).toISOString().slice(0, 10);
+    setAllEntries(previous => previous.map(entry => (
+      new Date(entry.created_at).toISOString().slice(0, 10) === primaryDay
+        ? { ...entry, primary_to_calendar: entry.id === primaryEntry.id }
+        : entry
+    )));
+    setSelectedEntry(previous => previous?.id === primaryEntry.id
+      ? { ...previous, primary_to_calendar: true }
+      : previous);
   };
 
   const toggleMenu = () => {
@@ -212,6 +234,7 @@ export default function MyCalendar() {
               </h2>
               <div className="flex items-center gap-4">
                 <button
+                  aria-label="Previous month"
                   onClick={handlePrevMonth}
                   className={`p-2 rounded-lg transition ${
                     isGameMode 
@@ -227,6 +250,7 @@ export default function MyCalendar() {
                   {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </span>
                 <button
+                  aria-label="Next month"
                   onClick={handleNextMonth}
                   className={`p-2 rounded-lg transition ${
                     isGameMode 
@@ -430,6 +454,7 @@ export default function MyCalendar() {
           time={selectedEntry.time}
           selected={selectedEntry}
           setSelected={setSelectedEntry}
+          onPrimarySelected={handlePrimarySelected}
         />
       )}
 

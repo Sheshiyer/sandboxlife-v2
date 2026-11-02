@@ -53,11 +53,9 @@ const UserProfilePage = () => {
         }
       }
 
-      // Fetch profile
+      // Fetch only the fields the server permits this viewer to see.
       const { data: profileData, error } = await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("user_id", profileId)
+        .rpc("get_social_profiles", { p_user_id: profileId })
         .single();
 
       if (error) {

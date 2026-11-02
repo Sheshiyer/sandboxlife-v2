@@ -129,6 +129,7 @@ export const fetchDailyEntryCount = async (userId, entryDate) => {
     .from('user_journal_entries')
     .select('id', { count: 'exact' })
     .eq('user_id', userId)
+    .eq('journal_type', 'daily_journal')
     .gte('created_at', startOfDay)
     .lte('created_at', endOfDay);
 

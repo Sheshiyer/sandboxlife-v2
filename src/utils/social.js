@@ -118,11 +118,9 @@ export async function searchUsers(query) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Not authenticated" };
 
-  // Search by email or display_name
+  // Read the projected directory, never another user's private profile row.
   const { data, error } = await supabase
-    .from("user_profiles")
-    .select("user_id, display_name, avatar_url, email:user_id")
-    .or(`display_name.ilike.%${query}%`)
+    .rpc("get_social_profiles", { p_search: query })
     .neq("user_id", user.id)
     .limit(20);
 

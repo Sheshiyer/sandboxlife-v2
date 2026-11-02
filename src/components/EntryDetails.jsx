@@ -16,6 +16,7 @@ import { daily_journal_questions, book_journal_questions, iconsv2_questions } fr
 import { useGameMode } from "../context/GameModeContext";
 import { resolveIcon } from "../utils/iconResolver";
 import { ENTRY_STATUS_LABELS, normalizeEntryStatus, resolveEntryQuestionText, getClassicBookStatusChipClass } from "../utils/journalEntrySemantics";
+import { setPrimaryCalendarEntry } from "../utils/supabase";
 
 function resolveEntryQuestion(entry, iconTitle) {
   if (!entry) return "";
@@ -57,10 +58,13 @@ export default function EntryDetails({
   message,
   time,
   selected,
-  setSelected
+  setSelected,
+  onPrimarySelected
 }) {
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState("");
+  const [primaryPending, setPrimaryPending] = useState(false);
+  const [primaryError, setPrimaryError] = useState("");
   const { isGameMode } = useGameMode();
 
   // Resolve icon for the display
@@ -171,6 +175,7 @@ export default function EntryDetails({
     : getClassicBookStatusChipClass(normalizedStatus);
 
   useEffect(() => {
+    setPrimaryError("");
     if (selected) {
       setOpen(true);
       setQuestion(resolveEntryQuestion(selected, iconTitle));
@@ -179,6 +184,22 @@ export default function EntryDetails({
       setQuestion("");
     }
   }, [selected, iconTitle]);
+
+  const handleMakePrimary = async (event) => {
+    event.stopPropagation();
+    if (primaryPending || !selected?.id || !onPrimarySelected) return;
+    setPrimaryPending(true);
+    setPrimaryError("");
+    try {
+      const result = await setPrimaryCalendarEntry(selected.id);
+      if (!result?.success) throw new Error('Primary update failed');
+      onPrimarySelected({ ...selected, primary_to_calendar: true });
+    } catch (error) {
+      setPrimaryError("Could not update the calendar icon. Please try again.");
+    } finally {
+      setPrimaryPending(false);
+    }
+  };
 
 
   return (
@@ -257,6 +278,19 @@ export default function EntryDetails({
                             </span>
                           )}
                         </div>
+                        {onPrimarySelected && selected?.id && !selected.primary_to_calendar && (
+                          <button
+                            type="button"
+                            onClick={handleMakePrimary}
+                            disabled={primaryPending}
+                            className={`rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-50 ${
+                              isGameMode ? "bg-yellow-500 text-slate-900" : "bg-[#9B1D1E] text-white"
+                            }`}
+                          >
+                            {primaryPending ? "Updating calendar..." : "Make primary on calendar"}
+                          </button>
+                        )}
+                        {primaryError && <p role="alert" className="text-sm text-red-600">{primaryError}</p>}
                         <div className={`p-1 rounded-2xl ${isGameMode ? "bg-yellow-500/20 shadow-[0_0_15px_rgba(255,215,0,0.1)]" : ""}`}>
                           <img
                             src={resolvedImage ? resolvedImage : defaultImg}
@@ -308,4 +342,5 @@ EntryDetails.propTypes = {
   time: PropTypes.string,
   selected: PropTypes.object,
   setSelected: PropTypes.func,
+  onPrimarySelected: PropTypes.func,
 };
