@@ -390,7 +390,7 @@ BEGIN
 IF auth.uid() IS DISTINCT FROM p_user_id  THEN RAISE EXCEPTION 'Caller identity mismatch' USING ERRCODE='42501'; END IF;
 
   RETURN QUERY
-  SELECT 
+  SELECT
     f.id AS friendship_id,
     CASE WHEN f.requester_id = p_user_id THEN f.addressee_id ELSE f.requester_id END AS friend_id,
     u.email AS friend_email,
@@ -448,18 +448,18 @@ IF p_user1_id=p_user2_id OR NOT EXISTS (SELECT 1 FROM auth.users WHERE id=p_user
   JOIN conversation_participants cp2 ON cp2.conversation_id = c.id AND cp2.user_id = p_user2_id
   WHERE c.type = 'direct'
   LIMIT 1;
-  
+
   -- If not found, create new conversation
   IF v_conversation_id IS NULL THEN
     INSERT INTO conversations (type, created_by)
     VALUES ('direct', p_user1_id)
     RETURNING id INTO v_conversation_id;
-    
+
     -- Add both participants
     INSERT INTO conversation_participants (conversation_id, user_id)
     VALUES (v_conversation_id, p_user1_id), (v_conversation_id, p_user2_id);
   END IF;
-  
+
   RETURN v_conversation_id;
 END;
 $function$
@@ -494,7 +494,7 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
   SELECT level, xp INTO current_level, current_xp
   FROM user_progression
   WHERE user_id = p_user_id;
-  
+
   -- If no progression record, create one
   IF NOT FOUND THEN
     INSERT INTO user_progression (user_id, level, xp)
@@ -504,24 +504,24 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
     -- Add XP
     current_xp := current_xp + xp_amount;
   END IF;
-  
+
   -- Check for level ups
   xp_needed := calculate_xp_for_level(current_level + 1);
-  
+
   WHILE current_xp >= xp_needed AND current_level < 100 LOOP
     current_level := current_level + 1;
     current_xp := current_xp - xp_needed;
     level_increased := TRUE;
     xp_needed := calculate_xp_for_level(current_level + 1);
   END LOOP;
-  
+
   -- Get new title
   SELECT title INTO updated_title
   FROM level_titles
   WHERE level <= current_level
   ORDER BY level DESC
   LIMIT 1;
-  
+
   -- Update progression
   UPDATE user_progression
   SET level = current_level,
@@ -529,7 +529,7 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
       title = COALESCE(updated_title, title),
       updated_at = NOW()
   WHERE user_id = p_user_id;
-  
+
   RETURN QUERY SELECT current_level, current_xp, level_increased, updated_title;
 END;
 $function$
@@ -559,11 +559,11 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
   INTO user_level, user_entries, user_streak
   FROM user_progression
   WHERE user_id = p_user_id;
-  
+
   -- Check level-based unlocks
   FOR unlocked_icon IN
     SELECT icon_uuid FROM icon_unlock_requirements
-    WHERE unlock_type = 'level' 
+    WHERE unlock_type = 'level'
       AND unlock_value <= user_level
       AND icon_uuid NOT IN (
         SELECT icon_uuid FROM user_unlocked_icons WHERE user_id = p_user_id
@@ -572,14 +572,14 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
     INSERT INTO user_unlocked_icons (user_id, icon_uuid, unlock_method)
     VALUES (p_user_id, unlocked_icon, 'level_requirement')
     ON CONFLICT (user_id, icon_uuid) DO NOTHING;
-    
+
     result_icons := array_append(result_icons, unlocked_icon);
   END LOOP;
-  
+
   -- Check entry-based unlocks
   FOR unlocked_icon IN
     SELECT icon_uuid FROM icon_unlock_requirements
-    WHERE unlock_type = 'entries' 
+    WHERE unlock_type = 'entries'
       AND unlock_value <= user_entries
       AND icon_uuid NOT IN (
         SELECT icon_uuid FROM user_unlocked_icons WHERE user_id = p_user_id
@@ -588,14 +588,14 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
     INSERT INTO user_unlocked_icons (user_id, icon_uuid, unlock_method)
     VALUES (p_user_id, unlocked_icon, 'entries_milestone')
     ON CONFLICT (user_id, icon_uuid) DO NOTHING;
-    
+
     result_icons := array_append(result_icons, unlocked_icon);
   END LOOP;
-  
+
   -- Check streak-based unlocks
   FOR unlocked_icon IN
     SELECT icon_uuid FROM icon_unlock_requirements
-    WHERE unlock_type = 'streak' 
+    WHERE unlock_type = 'streak'
       AND unlock_value <= user_streak
       AND icon_uuid NOT IN (
         SELECT icon_uuid FROM user_unlocked_icons WHERE user_id = p_user_id
@@ -604,10 +604,10 @@ IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','se
     INSERT INTO user_unlocked_icons (user_id, icon_uuid, unlock_method)
     VALUES (p_user_id, unlocked_icon, 'streak_milestone')
     ON CONFLICT (user_id, icon_uuid) DO NOTHING;
-    
+
     result_icons := array_append(result_icons, unlocked_icon);
   END LOOP;
-  
+
   RETURN QUERY SELECT result_icons;
 END;
 $function$
@@ -633,29 +633,29 @@ DECLARE
 BEGIN
   -- Award base XP for entry
   xp_earned := entry_xp;
-  
+
   -- Get current user stats
   SELECT last_entry_date, streak_days, total_entries
   INTO user_last_entry, current_streak, entry_count
   FROM user_progression
   WHERE user_id = NEW.user_id;
-  
+
   -- If no progression record, create one
   IF NOT FOUND THEN
     INSERT INTO user_progression (user_id, total_entries, last_entry_date, streak_days)
     VALUES (NEW.user_id, 1, CURRENT_DATE, 1);
-    
+
     -- Unlock default icons for new user
     INSERT INTO user_unlocked_icons (user_id, icon_uuid, unlock_method)
     SELECT NEW.user_id, icon_uuid, 'default'
     FROM icon_unlock_requirements
     WHERE is_default = true
     ON CONFLICT (user_id, icon_uuid) DO NOTHING;
-    
+
   ELSE
     -- Update entry count
     entry_count := entry_count + 1;
-    
+
     -- Update streak
     IF user_last_entry = CURRENT_DATE THEN
       -- Same day entry, no streak update
@@ -663,19 +663,19 @@ BEGIN
     ELSIF user_last_entry = CURRENT_DATE - INTERVAL '1 day' THEN
       -- Consecutive day
       current_streak := current_streak + 1;
-      
+
       -- Bonus XP for streaks
       IF current_streak >= 7 THEN
         bonus_xp := 15;
       ELSIF current_streak >= 3 THEN
         bonus_xp := 5;
       END IF;
-      
+
     ELSE
       -- Streak broken
       current_streak := 1;
     END IF;
-    
+
     -- Update progression
     UPDATE user_progression
     SET total_entries = entry_count,
@@ -685,13 +685,13 @@ BEGIN
         updated_at = NOW()
     WHERE user_id = NEW.user_id;
   END IF;
-  
+
   -- Award XP
   PERFORM award_xp(NEW.user_id, xp_earned + bonus_xp);
-  
+
   -- Check for icon unlocks
   PERFORM check_icon_unlocks(NEW.user_id);
-  
+
   RETURN NEW;
 END;
 $function$
@@ -795,16 +795,16 @@ REVOKE EXECUTE ON FUNCTION public."reset_weekly_quests"() FROM PUBLIC,anon,authe
 CREATE OR REPLACE FUNCTION public.get_pending_requests(p_user_id uuid)
  RETURNS TABLE(id uuid, requester_id uuid, addressee_id uuid, status text, created_at timestamp with time zone)
  LANGUAGE plpgsql
-AS $function$                                                                                                                                                                   
+AS $function$
   BEGIN
 IF auth.uid() IS DISTINCT FROM p_user_id AND current_user NOT IN ('postgres','service_role','supabase_admin') THEN RAISE EXCEPTION 'Caller identity mismatch' USING ERRCODE='42501'; END IF;
-                                                                                                                                                                     
-    RETURN QUERY                                                                                                                                                            
-    SELECT f.id, f.requester_id, f.addressee_id, f.status, f.created_at                                                                                                     
-    FROM friendships f                                                                                                                                                      
-    WHERE f.addressee_id = p_user_id                                                                                                                                        
-    AND f.status = 'pending';                                                                                                                                               
-  END;                                                                                                                                                                      
+
+    RETURN QUERY
+    SELECT f.id, f.requester_id, f.addressee_id, f.status, f.created_at
+    FROM friendships f
+    WHERE f.addressee_id = p_user_id
+    AND f.status = 'pending';
+  END;
   $function$
 ;
 
